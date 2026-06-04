@@ -8,43 +8,49 @@
     <meta name="theme-color" content="#e3e7ee">
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
     
-    <title>CALC MK-26</title>
+    <title>CALC Stock-26</title>
     <style>
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--bg-color); -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
-        :root { --bg-color: #e3e7ee; --case-color: #e8ecf3; --primary-orange: #ff6f00; --text-color: #2d3748; --text-muted: #5a6578; --shadow-dark: #b8c2d1; --shadow-light: #ffffff; --loss-red: #d32f2f; --lcd-bg: #a3b899; --lcd-text: #1a2515; }
-        html.dark-mode { --bg-color: #1e2024; --case-color: #252830; --primary-orange: #ff761a; --text-color: #e2e8f0; --text-muted: #a0aec0; --shadow-dark: #131518; --shadow-light: #313642; --loss-red: #ff6b6b; --lcd-bg: #15171c; --lcd-text: #ff761a; }
+        :root { --bg-color: #e3e7ee; --case-color: #e8ecf3; --primary-orange: #ff6f00; --text-color: #2d3748; --text-muted: #5a6578; --shadow-dark: #b8c2d1; --shadow-light: #ffffff; --accent-orange: #ff6f00; --lcd-bg: #a3b899; --lcd-loss-bg: #ffb885; --lcd-text: #1a2515; }
+        html.dark-mode { --bg-color: #1e2024; --case-color: #252830; --primary-orange: #ff761a; --text-color: #e2e8f0; --text-muted: #a0aec0; --shadow-dark: #131518; --shadow-light: #313642; --accent-orange: #ff761a; --lcd-bg: #15171c; --lcd-loss-bg: #7c5836; --lcd-text: #ff761a; }
         
         body { display: flex; flex-direction: column; align-items: center; min-height: 100dvh; padding: 20px; overflow-y: auto; }
         * { box-sizing: border-box; font-family: ui-monospace, "SF Mono", Menlo, Monaco, monospace; font-weight: 600; text-transform: uppercase; transition: all 0.3s ease; }
 
         .calculator-casio { background: var(--case-color); width: 100%; max-width: 440px; padding: 24px 20px; border-radius: 26px; box-shadow: 15px 15px 30px var(--shadow-dark), -15px -15px 30px var(--shadow-light); border: 4px solid var(--case-color); margin-top: 20px; }
 
-        /* Top Header */
         .casio-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 2px; }
         .brand-logo { font-size: 1.25rem; letter-spacing: 1.5px; color: var(--text-color) !important; }
         .brand-logo span { font-size: 0.7rem; vertical-align: super; margin-left: 2px; }
         .header-right { display: flex; align-items: center; gap: 15px; }
 
-        /* 擬物風 Toggle Switch */
         .skeu-toggle { position: relative; width: 50px; height: 26px; border-radius: 13px; cursor: pointer; background: var(--case-color); box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light); }
         .skeu-thumb { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #e8ecf3; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); }
         html.dark-mode .skeu-toggle { background: var(--case-color); }
         html.dark-mode .skeu-thumb { transform: translateX(24px); background: var(--primary-orange); box-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
 
-        /* LCD & UI */
         .lcd-screen { background: var(--lcd-bg); padding: 16px; border-radius: 14px; box-shadow: inset 4px 4px 8px rgba(0,0,0,0.25); margin-bottom: 20px; text-align: right; border: 3px solid rgba(0, 0, 0, 0.05); }
-        .lcd-screen.is-loss .result-title, .lcd-screen.is-loss .profit-value { color: var(--loss-red) !important; }
+        .lcd-screen.is-loss { background: var(--lcd-loss-bg); }
+        
         .result-title { font-size: 0.75rem; color: var(--lcd-text) !important; opacity: 0.85; margin-bottom: 4px; }
         .profit-value { font-size: 2rem; color: var(--lcd-text) !important; margin-bottom: 8px; }
         
-        .lcd-fees-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 6px; }
-        .fee-item { font-size: 0.5rem; color: var(--lcd-text) !important; opacity: 0.7; text-align: center; }
+        .lcd-fee-row { display: flex; justify-content: space-between; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 6px; margin-top: 4px; }
+        .fee-label { font-size: 0.5rem; color: var(--lcd-text) !important; opacity: 0.7; }
+        .fee-item-compact { font-size: 0.5rem; color: var(--lcd-text) !important; opacity: 0.7; }
 
         .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
         .casio-field { display: flex; flex-direction: column; }
         .casio-field label { font-size: 0.65rem; color: var(--text-muted) !important; margin-bottom: 6px; text-align: center; }
-        .casio-field input { width: 100%; padding: 12px 5px; border: none; border-radius: 10px; background: var(--case-color); color: var(--text-color) !important; font-size: 1rem; text-align: center; outline: none; box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light); }
+        
+        /* 加入防止 iOS selection 嘅 CSS */
+        .casio-field input { 
+            width: 100%; padding: 12px 5px; border: none; border-radius: 10px; background: var(--case-color); color: var(--text-color) !important; font-size: 1rem; text-align: center; outline: none; box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+        }
+        .casio-field input::placeholder { color: #a0aec0; }
         .casio-field input.focused { color: var(--primary-orange) !important; box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); }
+        .casio-field input.focused::placeholder { color: var(--primary-orange) !important; }
 
         .control-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .casio-btn-block { background: var(--case-color); padding: 12px; border-radius: 16px; box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light); display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -52,20 +58,19 @@
         .block-value { font-size: 1rem; color: var(--text-color) !important; margin-bottom: 6px; }
 
         .btn-casio-key { border: none; background: var(--case-color); color: var(--text-color) !important; width: 32px; height: 26px; border-radius: 6px; font-size: 0.7rem; cursor: pointer; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); }
-        .btn-reset { border: none; background: var(--case-color); color: var(--loss-red) !important; padding: 6px 12px; border-radius: 8px; font-size: 0.65rem; cursor: pointer; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); margin-top: 4px; }
+        .btn-reset { border: none; background: var(--case-color); color: var(--accent-orange) !important; padding: 6px 12px; border-radius: 8px; font-size: 0.65rem; cursor: pointer; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); margin-top: 4px; }
 
-        /* Integrated Keypad */
         .pad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
         .pad-key { border: none; background: var(--case-color); color: var(--text-color) !important; padding: 14px 0; font-size: 1.2rem; border-radius: 10px; box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light); cursor: pointer; }
         .pad-key:active { box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); }
-        .pad-delete { color: var(--loss-red) !important; }
+        .pad-c { color: var(--accent-orange) !important; }
     </style>
 </head>
 <body>
 
     <div class="calculator-casio">
         <div class="casio-top">
-            <div class="brand-logo">CALC <span>STOCK-26</span></div>
+            <div class="brand-logo">CALC <span>Stock-26</span></div>
             <div class="header-right">
                 <div class="skeu-toggle" id="themeToggle"><div class="skeu-thumb"></div></div>
             </div>
@@ -74,17 +79,18 @@
         <div class="lcd-screen" id="lcdScreen">
             <div class="result-title" id="lcdStatus">NET PROFIT</div>
             <div class="profit-value" id="netProfitDisplay">$0.00</div>
-            <div class="lcd-fees-grid">
-                <div class="fee-item">BUY: <span id="buyFeeLcd">$0.00</span></div>
-                <div class="fee-item">SELL: <span id="sellFeeLcd">$0.00</span></div>
-                <div class="fee-item">TOTAL: <span id="totalFeeLcd">$0.00</span></div>
+            <div class="lcd-fee-row">
+                <span class="fee-label">Fee</span>
+                <span class="fee-item-compact">Buy：<span id="buyFeeLcd">$0.00</span></span>
+                <span class="fee-item-compact">Sell：<span id="sellFeeLcd">$0.00</span></span>
+                <span class="fee-item-compact">Total：<span id="totalFeeLcd">$0.00</span></span>
             </div>
         </div>
         
         <div class="input-grid">
-            <div class="casio-field"><label>BUY</label><input type="text" id="buyPrice" inputmode="none" readonly></div>
-            <div class="casio-field"><label>SELL</label><input type="text" id="sellPrice" inputmode="none" readonly></div>
-            <div class="casio-field"><label>QTY</label><input type="text" id="shares" inputmode="none" readonly></div>
+            <div class="casio-field"><label>BUY</label><input type="text" id="buyPrice" placeholder="-" inputmode="none" readonly></div>
+            <div class="casio-field"><label>SELL</label><input type="text" id="sellPrice" placeholder="-" inputmode="none" readonly></div>
+            <div class="casio-field"><label>QTY</label><input type="text" id="shares" placeholder="-" inputmode="none" readonly></div>
         </div>
 
         <div class="control-row">
@@ -104,10 +110,10 @@
         </div>
 
         <div class="pad-grid">
-            <button class="pad-key" onclick="tapKey('1')">1</button><button class="pad-key" onclick="tapKey('2')">2</button><button class="pad-key" onclick="tapKey('3')">3</button>
-            <button class="pad-key" onclick="tapKey('4')">4</button><button class="pad-key" onclick="tapKey('5')">5</button><button class="pad-key" onclick="tapKey('6')">6</button>
             <button class="pad-key" onclick="tapKey('7')">7</button><button class="pad-key" onclick="tapKey('8')">8</button><button class="pad-key" onclick="tapKey('9')">9</button>
-            <button class="pad-key" onclick="tapKey('.')">.</button><button class="pad-key" onclick="tapKey('0')">0</button><button class="pad-key pad-delete" onclick="tapKey('backspace')">⌫</button>
+            <button class="pad-key" onclick="tapKey('4')">4</button><button class="pad-key" onclick="tapKey('5')">5</button><button class="pad-key" onclick="tapKey('6')">6</button>
+            <button class="pad-key" onclick="tapKey('1')">1</button><button class="pad-key" onclick="tapKey('2')">2</button><button class="pad-key" onclick="tapKey('3')">3</button>
+            <button class="pad-key" onclick="tapKey('.')">.</button><button class="pad-key" onclick="tapKey('0')">0</button><button class="pad-key pad-c" onclick="backspace()">C</button>
         </div>
     </div>
 
@@ -130,10 +136,16 @@
 
         function tapKey(key) {
             if (!currentActiveInput) return;
-            if (key === 'backspace') currentActiveInput.value = currentActiveInput.value.slice(0, -1);
-            else if (key === '.' && currentActiveInput.value.includes('.')) return;
-            else currentActiveInput.value += key;
+            if (key === '.' && currentActiveInput.value.includes('.')) return;
+            currentActiveInput.value += key;
             calculate();
+        }
+
+        function backspace() {
+            if (currentActiveInput) {
+                currentActiveInput.value = currentActiveInput.value.slice(0, -1);
+                calculate();
+            }
         }
 
         function resetAll() {
