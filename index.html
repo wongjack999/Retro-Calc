@@ -11,6 +11,29 @@
     
     <title>CASIO STYLE TRADING CALCULATOR V3.8</title>
     <style>
+    
+        /* 禁止所有彈跳、放大同點擊變色 */
+        html, body {
+            width: 100%;
+            /* 核心：使用 100dvh 強制適應手機扣除工具列後嘅真實高度 */
+            height: 100dvh; 
+            overflow: hidden; 
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            position: fixed; /* 防止 Safari 捲動時「彈返上去」 */
+        }
+
+        /* 確保 App 永遠置中唔會變形 */
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bg-color);
+        }
+    
         /* Safari 修正：禁止全頁彈跳與選取 */
         html, body {
             overflow: hidden;
