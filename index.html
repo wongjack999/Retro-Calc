@@ -1,675 +1,374 @@
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Rebalance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#e3e7ee">
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+    
+    <title>CASIO STYLE TRADING CALCULATOR V3.8</title>
     <style>
-        /* ****** 輕柔 Neumorphism 變量 (Soft White & Blue Highlight) ****** */
+        /* LIGHT MODE */
         :root {
-            /* 主體顏色與光暈 (柔和白) */
-            --bg-color: #ECF0F3; 
-            --main-color: #ECF0F3; 
-            --text-primary: #333333;
-            --text-secondary: #9AA4AE;
-
-            /* 強調色 (淺藍色) */
-            --highlight-color: #635AF0; 
-            --highlight-light: #7F70FF; 
-            --highlight-text: #FFFFFF;
-
-            /* Neumorphism 陰影 (柔和光暈感) */
-            --shadow-light: 10px 10px 20px rgba(174, 174, 192, 0.4), -10px -10px 20px #FFFFFF;
-            --shadow-small: 5px 5px 10px rgba(174, 174, 192, 0.3), -5px -5px 10px #FFFFFF;
-            --inner-shadow-light: inset 5px 5px 10px rgba(174, 174, 192, 0.4), inset -5px -5px 10px #FFFFFF;
-
-            /* Slider 陰影 */
-            --thumb-shadow: 0 5px 15px rgba(174, 174, 192, 0.6), -5px -5px 10px #FFFFFF; 
-
-            /* LCD 顯示屏 */
-            --screen-bg: #F0F4F7; 
-            --screen-text: var(--highlight-color); 
-            --screen-label: var(--text-secondary); 
-
-            /* 按鈕與活躍色 */
-            --btn-control-color: var(--main-color);
-            --btn-calc-color: var(--highlight-color); 
-            --btn-calc-shadow: 0 5px 15px rgba(76, 114, 176, 0.4); 
-            --active-color: var(--highlight-light); 
-            
-            /* 狀態顏色 */
-            --status-ok-border: #15CF74;
-            --status-warn-border: #F23645;
-            --action-border: #9AA4AE;
-            --dca-border: var(--highlight-color);
-
-            /* Slider 顏色 */
-            --slider-thumb-size: 24px;
+            --bg-color: #e3e7ee;
+            --case-color: #e8ecf3;
+            --primary-orange: #ff6f00; 
+            --text-color: #2d3748;
+            --text-muted: #5a6578;
+            --shadow-dark: #b8c2d1;
+            --shadow-light: #ffffff;
+            --loss-red: #d32f2f; /* 警示紅 */
+            --lcd-bg: #a3b899; 
+            --lcd-text: #1a2515;
         }
+
+        /* DARK MODE */
+        html.dark-mode, body.dark-mode {
+            --bg-color: #1e2024;
+            --case-color: #252830;
+            --primary-orange: #ff761a;
+            --text-color: #e2e8f0;
+            --text-muted: #a0aec0;
+            --shadow-dark: #131518;
+            --shadow-light: #313642;
+            --loss-red: #ff6b6b; /* 警示紅 */
+            --lcd-bg: #15171c;
+            --lcd-text: #ff761a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: ui-monospace, "SF Mono", Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", monospace;
+            font-weight: 600; 
+            text-transform: uppercase; 
+            transition: all 0.3s ease; /* 加快所有過渡效果 */
+        }
+
+        html { background-color: var(--bg-color) !important; height: 100%; color-scheme: light; }
+        html.dark-mode { color-scheme: dark; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--bg-color); 
+            background-color: var(--bg-color) !important;
             display: flex;
             justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 40px 0;
-            color: var(--text-primary);
-            overflow-x: hidden;
-        }
-
-        .container {
-            background: var(--main-color);
-            padding: 15px 25px 40px;
-            border-radius: 30px; 
-            box-shadow: var(--shadow-light); 
-            width: 95%;
-            max-width: 400px;
-            box-sizing: border-box;
-            z-index: 1;
-        }
-
-        h2 {
-            font-size: 1.6rem;
-            font-weight: 600;
-            margin-bottom: 25px;
-            color: var(--text-primary);
-            text-align: center;
-        }
-        
-        .screen-display {
-            background-color: var(--screen-bg);
-            color: var(--screen-text);
-            padding: 20px 15px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: var(--inner-shadow-light);
-            font-family: sans-serif;
-            text-align: center;
-            border: none;
-        }
-        .screen-display .main-value {
-            font-size: 2.8rem;
-            font-weight: 700;
-            line-height: 1.1;
-            margin: 0 0 5px 0;
-            color: var(--screen-text);
-        }
-        .screen-display .label {
-            font-size: 0.9rem;
-            color: var(--screen-label);
-            display: block;
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
-        .screen-display .sub-info {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: var(--screen-label);
-            font-weight: 500;
-            /* ✨ 修正：使用 align-items: center 確保文字垂直對齊 */
             align-items: center; 
-        }
-        .screen-display .percentage {
-            font-size: 1.2rem;
-            color: var(--screen-text);
-            font-weight: 700;
-            /* ✨ 修正：微調行高 */
-            line-height: 1.1; 
-        }
-
-        /* ------------------------------------- */
-        /* 輸入框組件 (資產名稱與市值) */
-        /* ------------------------------------- */
-        .input-item label, .input-group label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 500;
-            color: var(--text-primary);
-            font-size: 0.95rem;
-        }
-        
-        .asset-input {
-            border-radius: 15px;
-            box-shadow: var(--inner-shadow-light);
-            background-color: var(--screen-bg);
-            height: 50px;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-        }
-        
-        .asset-input input {
-            padding: 12px 15px;
-            border: none;
-            background: none;
-            color: var(--text-primary);
-            outline: none;
-            box-shadow: none;
-            margin-bottom: 0;
-            height: 100%;
-            text-align: center;
-        }
-
-        .asset-input input[type="text"] {
-            width: 50%;
-            font-size: 1.05rem;
-            border-right: 1px solid #D9DEE3;
-            font-weight: 600;
-        }
-
-        .asset-input input[type="number"] {
-            width: 50%;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--highlight-color);
-        }
-        
-        /* ------------------------------------- */
-        /* 月供滑桿 (Slider) 樣式 */
-        /* ------------------------------------- */
-
-        .slider-group {
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        .dca-value-display {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--highlight-color);
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        input[type="range"] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 10px; 
-            background: transparent;
-            margin: 10px 0;
-        }
-
-        /* 軌道 Track (凹陷效果) */
-        input[type="range"]::-webkit-slider-runnable-track {
-            height: 10px;
-            border-radius: 5px;
-            background: var(--main-color);
-            box-shadow: var(--inner-shadow-light); 
-            border: none;
-        }
-        input[type="range"]::-moz-range-track {
-            height: 10px;
-            border-radius: 5px;
-            background: var(--main-color);
-            box-shadow: var(--inner-shadow-light); 
-            border: none;
-        }
-
-        /* 圓形控制點 Thumb (純白 + 加強陰影) */
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: var(--slider-thumb-size);
-            width: var(--slider-thumb-size);
-            border-radius: 50%;
-            background: var(--main-color); 
-            margin-top: calc((var(--slider-thumb-size) - 10px) / -2); 
-            box-shadow: var(--thumb-shadow); 
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        /* 按下時 (Active state) - 凹陷效果 */
-        input[type="range"]:active::-webkit-slider-thumb {
-            box-shadow: var(--inner-shadow-light); 
-            transform: scale(0.95);
-        }
-
-        /* Firefox 兼容性設置 - 已修正 Bug */
-        input[type="range"]::-moz-range-thumb {
-            height: var(--slider-thumb-size);
-            width: var(--slider-thumb-size);
-            border-radius: 50%;
-            background: var(--main-color);
-            box-shadow: var(--thumb-shadow); 
-            cursor: pointer;
-            border: none; 
-            /* *** 修正點 1: 新增 margin-top 確保居中 *** */
-            margin-top: calc((var(--slider-thumb-size) - 10px) / -2); 
-        }
-
-        /* ------------------------------------- */
-        /* 主要計算按鈕 */
-        /* ------------------------------------- */
-        .config-buttons {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        .config-buttons button {
-            padding: 15px 10px;
-            border: none;
-            border-radius: 20px; 
-            font-size: 0.9rem; /* <-- 確保所有按鈕都有呢個大小 */
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease; 
-            color: var(--text-primary);
-            background: var(--btn-control-color); 
-            box-shadow: var(--shadow-small);
-            border: none;
-        }
-        .config-buttons button.active {
-            background-color: var(--active-color);
-            color: var(--highlight-text);
-            box-shadow: var(--inner-shadow-light); 
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-        
-        button#calculate-btn {
-            width: 100%;
-            padding: 20px;
-            background-color: var(--btn-calc-color);
-            color: var(--highlight-text);
-            border: none;
-            border-radius: 20px;
-            font-size: 1.2rem;
-            font-weight: 800;
-            cursor: pointer;
-            margin-top: 25px;
-            box-shadow: var(--btn-calc-shadow);
-            transition: all 0.2s ease;
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-        }
-        button#calculate-btn:active {
-            box-shadow: inset 3px 3px 7px rgba(0, 0, 0, 0.3), inset -3px -3px 7px var(--highlight-light);
-            transform: translateY(1px);
-        }
-
-        /* ------------------------------------- */
-        /* 結果展示 (卡片與表格) - 圓角修正區域 */
-        /* ------------------------------------- */
-        .result-panel {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #D9DEE3;
-            display: none; 
-            animation: fadeInSlide 0.6s ease-out forwards; 
-        }
-
-        .summary-table {
-            border-collapse: separate; 
-            border-spacing: 0; 
-            width: 100%;
-            border-radius: 20px;
-            box-shadow: var(--shadow-small);
-            background-color: var(--main-color);
+            min-height: 100vh;
+            padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)) 20px;
             overflow: hidden; 
         }
-        .summary-table th, .summary-table td {
-            text-align: left;
-            padding: 15px;
-            font-size: 0.95rem;
-            background-color: var(--main-color);
-            border-bottom: 1px solid #D9DEE3; 
-        }
-        
-        .summary-table th {
-            background-color: var(--screen-bg);
-            color: var(--text-primary);
-            font-weight: 600;
+
+        .calculator-casio {
+            background: var(--case-color);
+            width: 100%;
+            max-width: 440px;
+            padding: 32px 26px; 
+            border-radius: 26px;
+            box-shadow: 15px 15px 30px var(--shadow-dark), -15px -15px 30px var(--shadow-light);
+            border: 4px solid var(--case-color);
+            transform: translateY(0);
         }
 
-        /* 處理邊角圓角 */
-        .summary-table thead tr:first-child th:first-child {
-            border-top-left-radius: 20px;
-        }
-        .summary-table thead tr:first-child th:last-child {
-            border-top-right-radius: 20px;
+        body.keyboard-open .calculator-casio { transform: translateY(-60px); }
+
+        .casio-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 0 2px; }
+        .brand-logo { font-size: 1.25rem; letter-spacing: 1.5px; color: var(--text-color) !important; }
+        .brand-logo span { font-size: 0.7rem; vertical-align: super; margin-left: 2px; }
+
+        .solar-panel { background: #3b2314; width: 95px; height: 26px; border-radius: 4px; display: flex; gap: 3px; padding: 3px; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.4); }
+        .solar-grid { flex: 1; background: #5c3a21; opacity: 0.8; border-right: 1px solid #22120a; }
+
+        /* LCD SCREEN */
+        .lcd-screen {
+            background: var(--lcd-bg);
+            padding: 20px 20px; 
+            border-radius: 14px;
+            box-shadow: inset 4px 4px 8px rgba(0,0,0,0.25), inset -4px -4px 6px rgba(255,255,255,0.1);
+            margin-bottom: 28px;
+            text-align: right;
+            border: 3px solid rgba(0, 0, 0, 0.05);
+            overflow: hidden; 
         }
 
-        /* 確保表格尾部單元格沒有底邊線，並帶有圓角 */
-        .summary-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-        .summary-table tbody tr:last-child td:first-child {
-            border-bottom-left-radius: 20px;
-        }
-        .summary-table tbody tr:last-child td:last-child {
-            border-bottom-right-radius: 20px;
-        }
-        
-        .status-box, .action-steps, .dca-advice {
-            border-radius: 15px;
-            margin-top: 20px;
-            padding: 18px;
-            font-weight: 500;
-            background-color: var(--main-color);
-            box-shadow: var(--shadow-small); 
-            border: none;
-            font-size: 0.95rem;
-        }
-        .status-box strong, .dca-advice strong {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        
-        .status-ok { 
-            border-left: 6px solid var(--status-ok-border);
-        }
-        .status-warn { 
-            color: var(--status-warn-border);
-            border-left: 6px solid var(--status-warn-border); 
-        }
-        .action-steps { 
-            border-left: 6px solid var(--action-border);
-        }
-        .dca-advice { 
-            border-left: 6px solid var(--dca-border);
+        /* 警示模式：當觸發 loss 時，將 LCD 內部所有文字變為紅色 */
+        .lcd-screen.is-loss .result-title,
+        .lcd-screen.is-loss .profit-value {
+            color: var(--loss-red) !important;
         }
 
-        @keyframes fadeInSlide {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .result-title { font-size: 0.82rem; color: var(--lcd-text) !important; opacity: 0.85; letter-spacing: 1px; margin-bottom: 8px; white-space: nowrap; }
+        .profit-display-container { display: flex; justify-content: flex-end; align-items: baseline; color: var(--lcd-text) !important; width: 100%; }
+        .profit-value { font-size: 2.2rem; letter-spacing: -0.5px; white-space: nowrap; }
+
+        /* INPUTS & CONTROLS */
+        .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
+        .casio-field { display: flex; flex-direction: column; }
+        .casio-field label { font-size: 0.75rem; color: var(--text-muted) !important; margin-bottom: 8px; text-align: center; letter-spacing: 0.5px; }
+        .casio-field input { width: 100%; padding: 14px 5px; border: none; border-radius: 12px; background: var(--case-color); color: var(--text-color) !important; font-size: 1.15rem; text-align: center; outline: none; box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light); }
+        .casio-field input.focused { color: var(--primary-orange) !important; box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); }
+
+        .control-row { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; margin-bottom: 24px; }
+        .casio-btn-block { background: var(--case-color); padding: 18px 12px; border-radius: 16px; box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .block-title { font-size: 0.75rem; color: var(--text-muted) !important; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .block-value { font-size: 1.15rem; color: var(--text-color) !important; margin-bottom: 10px; }
+
+        .sl-box { flex-direction: column; }
+        .sl-ctrls { display: flex; align-items: center; gap: 14px; width: 100%; justify-content: center; }
+        .btn-casio-key { border: none; background: var(--case-color); color: var(--text-color) !important; width: 38px; height: 32px; border-radius: 8px; font-size: 0.75rem; cursor: pointer; box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light); outline: none; user-select: none; }
+        .btn-casio-key:active { box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); }
+
+        .dark-mode-box { flex-direction: column; }
+        .ios-toggle-switch { position: relative; width: 54px; height: 30px; border-radius: 15px; background: #cbd5e1; box-shadow: inset 1px 2px 4px rgba(0,0,0,0.15); cursor: pointer; margin-bottom: 12px; }
+        html.dark-mode .ios-toggle-switch { background: var(--primary-orange); box-shadow: inset 1px 2px 4px rgba(0,0,0,0.2), 0 0 8px rgba(255, 118, 26, 0.3); }
+        .ios-switch-thumb { position: absolute; top: 2px; left: 2px; width: 26px; height: 26px; border-radius: 50%; background: #ffffff; box-shadow: 1px 2px 4px rgba(0,0,0,0.2); }
+        html.dark-mode .ios-switch-thumb { transform: translateX(24px); }
+        .btn-reset { border: none; background: var(--case-color); color: var(--loss-red) !important; padding: 6px 16px; border-radius: 8px; font-size: 0.72rem; letter-spacing: 1px; cursor: pointer; box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light); outline: none; user-select: none; }
+        .btn-reset:active { box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); }
+
+        .total-cost-block { margin-bottom: 24px; padding: 16px 20px; align-items: flex-start; text-align: left; }
+        .total-cost-block .block-value { margin-bottom: 0; font-size: 1.25rem; }
+
+        .paper-tape { background: var(--case-color); padding: 18px; border-radius: 14px; box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light); }
+        .tape-row { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted) !important; margin-bottom: 8px; letter-spacing: 0.5px; }
+        .tape-total { color: var(--text-color) !important; border-top: 1px dashed var(--shadow-dark); padding-top: 8px; margin-top: 8px; }
+
+        .bottom-sheet-pad { position: fixed; bottom: 0; left: 0; right: 0; background: var(--case-color); border-top-left-radius: 26px; border-top-right-radius: 26px; box-shadow: 0 -8px 30px rgba(0,0,0,0.15); transform: translateY(100%); z-index: 9999; padding: 18px 24px calc(20px + env(safe-area-inset-bottom)) 24px; }
+        html.dark-mode .bottom-sheet-pad { box-shadow: 0 -8px 30px rgba(0,0,0,0.4); }
+        .bottom-sheet-pad.open { transform: translateY(0); }
+        .pad-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+        .pad-title { font-size: 0.8rem; color: var(--text-muted); letter-spacing: 1px; }
+        .btn-done { background: var(--primary-orange); color: #ffffff !important; border: none; padding: 8px 22px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; box-shadow: 2px 2px 5px var(--shadow-dark); }
+        html.dark-mode .btn-done { color: #1a1c1e !important; }
+        .pad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .pad-key { border: none; background: var(--case-color); color: var(--text-color) !important; padding: 16px 0; font-size: 1.4rem; border-radius: 14px; cursor: pointer; box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light); outline: none; user-select: none; }
+        .pad-key:active { box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); }
+        .pad-delete { color: var(--loss-red) !important; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>投資組合再平衡</h2>
-    
-    <div id="top-display" class="screen-display">
-        <span class="label">當前總資產 (K 美元)</span>
-        <div class="main-value" id="resTotalDisplay">0.00</div>
-        <div class="sub-info">
-            <span>核心資產 (<span id="resAssetNameA_short">A</span>) 比例:</span> 
-            <span class="percentage" id="resAssetAPctDisplay">0.00%</span>
+    <div class="calculator-casio">
+        <div class="casio-top">
+            <div class="brand-logo">CASIO <span>ST-26</span></div>
+            <div class="solar-panel">
+                <div class="solar-grid"></div><div class="solar-grid"></div><div class="solar-grid"></div><div class="solar-grid"></div>
+            </div>
+        </div>
+        
+        <div class="lcd-screen" id="lcdScreen">
+            <div class="result-title" id="lcdStatus">NET PROFIT</div>
+            <div class="profit-display-container">
+                <span class="profit-value" id="netProfitDisplay">$0.00</span>
+            </div>
+        </div>
+        
+        <div class="input-grid">
+            <div class="casio-field">
+                <label>BUY PRICE</label>
+                <input type="text" id="buyPrice" placeholder=".00" inputmode="none" readonly>
+            </div>
+            <div class="casio-field">
+                <label>SELL PRICE</label>
+                <input type="text" id="sellPrice" placeholder=".00" inputmode="none" readonly>
+            </div>
+            <div class="casio-field">
+                <label>SHARES</label>
+                <input type="text" id="shares" placeholder="0" inputmode="none" readonly>
+            </div>
+        </div>
+
+        <div class="control-row">
+            <div class="casio-btn-block sl-box">
+                <div class="block-title">STOP LOSS (<span id="slPercentDisplay">-5.0%</span>)</div>
+                <div class="block-value" id="slPriceDisplay">$0.00</div>
+                <div class="sl-ctrls">
+                    <button class="btn-casio-key" onclick="adjustSL(-0.5)">▼</button>
+                    <button class="btn-casio-key" onclick="adjustSL(0.5)">▲</button>
+                </div>
+            </div>
+            
+            <div class="casio-btn-block dark-mode-box">
+                <div class="block-title">DARK MODE</div>
+                <div class="ios-toggle-switch" id="themeToggle">
+                    <div class="ios-switch-thumb"></div>
+                </div>
+                <button class="btn-reset" onclick="resetAll()">RESET</button>
+            </div>
+        </div>
+
+        <div class="casio-btn-block total-cost-block">
+            <div class="block-title">TOTAL BUY COST</div>
+            <div class="block-value" id="totalCostDisplay">$0.00</div>
+        </div>
+
+        <div class="paper-tape">
+            <div class="tape-row"><span>BUY FEE:</span><span id="buyFeeDisplay">$0.00</span></div>
+            <div class="tape-row"><span>SELL FEE:</span><span id="sellFeeDisplay">$0.00</span></div>
+            <div class="tape-row tape-total"><span>TOTAL FEE:</span><span id="totalFeeDisplay">$0.00</span></div>
         </div>
     </div>
 
-    <div class="input-group">
-        <label>設定目標比例 (核心 / 衛星)</label>
-        <div class="config-buttons">
-            <button id="btn-80-20" onclick="setTarget(80, 20); calculate();">80% / 20%</button>
-            <button id="btn-70-30" onclick="setTarget(70, 30); calculate();">70% / 30%</button>
-            <button id="btn-60-40" onclick="setTarget(60, 40); calculate();">60% / 40%</button>
-            <button id="btn-50-50" onclick="setTarget(50, 50); calculate();">50% / 50%</button>
+    <div class="bottom-sheet-pad" id="customPad">
+        <div class="pad-header">
+            <div class="pad-title" id="padTargetLabel">INPUTTING</div>
+            <button class="btn-done" onclick="closePad()">DONE</button>
         </div>
-    </div>
-    
-    <div class="input-item">
-        <label for="assetAName">核心資產名稱與市值 (K 美元)</label>
-        <div class="asset-input">
-            <input type="text" id="assetAName" value="QQQ" placeholder="資產代號" oninput="calculate()">
-            <input type="number" id="assetAVal" value="8.50" placeholder="市值" oninput="calculate()">
+        <div class="pad-grid">
+            <button class="pad-key" onclick="tapKey('1')">1</button><button class="pad-key" onclick="tapKey('2')">2</button><button class="pad-key" onclick="tapKey('3')">3</button>
+            <button class="pad-key" onclick="tapKey('4')">4</button><button class="pad-key" onclick="tapKey('5')">5</button><button class="pad-key" onclick="tapKey('6')">6</button>
+            <button class="pad-key" onclick="tapKey('7')">7</button><button class="pad-key" onclick="tapKey('8')">8</button><button class="pad-key" onclick="tapKey('9')">9</button>
+            <button class="pad-key" onclick="tapKey('.')">.</button><button class="pad-key" onclick="tapKey('0')">0</button><button class="pad-key pad-delete" onclick="tapKey('backspace')">⌫</button>
         </div>
     </div>
 
-    <div class="input-item">
-        <label for="assetBName">衛星資產名稱與市值 (K 美元)</label>
-        <div class="asset-input">
-            <input type="text" id="assetBName" value="BND" placeholder="資產代號" oninput="calculate()">
-            <input type="number" id="assetBVal" value="1.50" placeholder="市值" oninput="calculate()">
-        </div>
-    </div>
+    <script>
+        let stopLossPercent = -5.0;
+        let currentActiveInput = null;
+        const themeToggle = document.getElementById('themeToggle');
+        const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        const customPad = document.getElementById('customPad');
+        const padTargetLabel = document.getElementById('padTargetLabel');
+        const lcdScreen = document.getElementById('lcdScreen');
 
-    <div class="input-group slider-group">
-        <label for="dcaAmountSlider">每月供款金額 (K 美元)</label>
-        <span id="dcaAmountDisplay" class="dca-value-display">0.50 K USD</span> 
-        <input 
-            type="range" 
-            id="dcaAmountSlider" 
-            min="0" 
-            max="10" 
-            step="0.05" 
-            value="0.50" 
-            oninput="updateDCA(this.value); calculate();"
-        >
-    </div>
-    <button id="calculate-btn" onclick="calculate()">執行評估</button>
-
-    <div id="resultPanel" class="result-panel">
-        <h3 style="font-size: 1.3rem; margin-top: 0; color: var(--text-primary);">組合狀況概要</h3>
-
-        <table class="summary-table">
-            <thead>
-                <tr>
-                    <th>資產</th>
-                    <th>市值 (K 美元)</th>
-                    <th>比例</th>
-                    <th>目標比例</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td id="resAssetNameA">QQQ</td>
-                    <td id="resAssetAVal">-</td>
-                    <td id="resAssetAPct">-</td>
-                    <td id="resTargetA">80%</td>
-                </tr>
-                <tr>
-                    <td id="resAssetNameB">BND</td>
-                    <td id="resAssetBVal">-</td>
-                    <td id="resAssetBPct">-</td>
-                    <td id="resTargetB">20%</td>
-                </tr>
-                <tr>
-                    <td style="font-weight: 700;">總值</td>
-                    <td id="resTotal" colspan="3" style="font-weight: 700;">-</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div id="statusBox" class="status-box"></div>
-        <div id="actionSteps" class="action-steps" style="display:none;"></div>
-        <div id="dcaAdvice" class="dca-advice"></div>
-    </div>
-    
-</div>
-
-<script>
-    let targetA_pct = 80;
-    let targetB_pct = 20;
-    const REBALANCE_TOLERANCE = 5; 
-
-    // 滑桿數值實時更新，並觸發計算
-    function updateDCA(value) {
-        document.getElementById('dcaAmountDisplay').innerText = `${parseFloat(value).toFixed(2)} K USD`;
-    }
-
-    function setTarget(A, B) {
-        targetA_pct = A;
-        targetB_pct = B;
-        
-        // 確保所有按鈕狀態都正確切換
-        document.getElementById('btn-80-20').classList.toggle('active', A === 80);
-        document.getElementById('btn-70-30').classList.toggle('active', A === 70);
-        document.getElementById('btn-60-40').classList.toggle('active', A === 60);
-        document.getElementById('btn-50-50').classList.toggle('active', A === 50);
-
-        document.getElementById('resTargetA').innerText = `${targetA_pct}%`;
-        document.getElementById('resTargetB').innerText = `${targetB_pct}%`;
-    }
-    
-    document.addEventListener('DOMContentLoaded', () => {
-        // 初始化資產名稱
-        const assetAName = document.getElementById('assetAName').value.toUpperCase().trim() || 'Asset A';
-        const assetBName = document.getElementById('assetBName').value.toUpperCase().trim() || 'Asset B';
-        document.getElementById('resAssetNameA_short').innerText = assetAName;
-        document.getElementById('resAssetNameA').innerText = assetAName;
-        document.getElementById('resAssetNameB').innerText = assetBName;
-
-        // 初始化目標比例與按鈕狀態
-        setTarget(80, 20); 
-        
-        // 初始化頂部顯示
-        document.getElementById('resTotalDisplay').innerText = '0.00';
-        document.getElementById('resAssetAPctDisplay').innerText = '0.00%';
-        
-        // 初始化滑桿顯示
-        const initialDCA = document.getElementById('dcaAmountSlider').value;
-        updateDCA(initialDCA); 
-
-        // 執行初始計算
-        calculate();
-    });
-
-    function calculate() {
-        const assetAName = document.getElementById('assetAName').value.toUpperCase().trim() || 'Asset A';
-        const assetBName = document.getElementById('assetBName').value.toUpperCase().trim() || 'Asset B';
-        
-        const assetAVal = parseFloat(document.getElementById('assetAVal').value) || 0;
-        const assetBVal = parseFloat(document.getElementById('assetBVal').value) || 0;
-        const dcaAmount = parseFloat(document.getElementById('dcaAmountSlider').value) || 0;
-        
-        const totalVal = assetAVal + assetBVal;
-
-        if (totalVal <= 0) {
-            document.getElementById('resTotalDisplay').innerText = '0.00';
-            document.getElementById('resAssetAPctDisplay').innerText = '0.00%';
-            document.getElementById('resultPanel').style.display = "none";
-            
-            // 如果總值為 0，需要更新表格中的數值為 '-'
-            document.getElementById('resAssetAVal').innerText = '-';
-            document.getElementById('resAssetAPct').innerText = '-';
-            document.getElementById('resAssetBVal').innerText = '-';
-            document.getElementById('resAssetBPct').innerText = '-';
-            document.getElementById('resTotal').innerText = '-';
-
-            // 重置狀態盒
-            document.getElementById('statusBox').className = "status-box status-ok";
-            document.getElementById('statusBox').innerHTML = " **請輸入資產市值**";
-            document.getElementById('actionSteps').style.display = "none";
-            document.getElementById('dcaAdvice').innerHTML = "請設定每月供款金額 (K 美元) 以獲取月供分配建議。";
-            
-            return;
-        }
-
-        const minA = targetA_pct - REBALANCE_TOLERANCE;
-        const maxA = targetA_pct + REBALANCE_TOLERANCE;
-        
-        // 更新 UI 標籤與結果欄位
-        document.getElementById('resAssetNameA').innerText = assetAName;
-        document.getElementById('resAssetNameA_short').innerText = assetAName;
-        document.getElementById('resAssetNameB').innerText = assetBName;
-        // resTargetA/B 由 setTarget 更新，呢度毋須重複
-
-        const assetAPct = (assetAVal / totalVal) * 100;
-        const assetBPct = 100 - assetAPct;
-        
-        // 輸出結果格式
-        document.getElementById('resAssetAVal').innerText = `${assetAVal.toFixed(2)} K USD`;
-        document.getElementById('resAssetAPct').innerText = `${assetAPct.toFixed(2)}%`;
-        document.getElementById('resAssetBVal').innerText = `${assetBVal.toFixed(2)} K USD`;
-        document.getElementById('resAssetBPct').innerText = `${assetBPct.toFixed(2)}%`;
-        document.getElementById('resTotal').innerText = `${totalVal.toFixed(2)} K USD`;
-
-        // 更新頂部儀表盤
-        document.getElementById('resTotalDisplay').innerText = `${totalVal.toFixed(2)}`;
-        document.getElementById('resAssetAPctDisplay').innerText = `${assetAPct.toFixed(2)}%`;
-
-
-        // ********** 動畫邏輯更新 **********
-        const resultPanel = document.getElementById('resultPanel');
-        resultPanel.style.display = "none"; 
-        void resultPanel.offsetWidth; 
-        resultPanel.style.display = "block"; 
-        // **********************************
-
-        const statusBox = document.getElementById('statusBox');
-        const actionSteps = document.getElementById('actionSteps');
-        const dcaAdvice = document.getElementById('dcaAdvice');
-        
-        let needsRebalance = false;
-        let message = "";
-        
-        if (assetAPct > maxA) {
-            needsRebalance = true;
-            message = ` **比例警告** ${assetAName} 佔比嚴重過高 (${assetAPct.toFixed(2)}% > ${maxA}%)，建議立即再平衡。`;
-            statusBox.className = "status-box status-warn";
-        } else if (assetAPct < minA) {
-            needsRebalance = true;
-            message = ` **比例警告** ${assetAName} 佔比嚴重不足 (${assetAPct.toFixed(2)}% < ${minA}%)，建議立即再平衡。`;
-            statusBox.className = "status-box status-warn";
-        } else {
-            message = " **比例健康** 投資組合比例在設定容忍度範圍內。";
-            statusBox.className = "status-box status-ok";
-        }
-        
-        statusBox.innerHTML = `<strong>${message.trim()}</strong>`; 
-
-        // --- 傳統再平衡建議 ---
-        if (needsRebalance) {
-            actionSteps.style.display = "block";
-            
-            const targetA = totalVal * (targetA_pct / 100);
-            const diffA = targetA - assetAVal; 
-            const diffB = -diffA; 
-            
-            const buyColor = 'var(--highlight-color)'; 
-            const sellColor = 'var(--status-warn-border)'; 
-
-            // 輸出結果格式：數值在前，K 美元在後
-            const assetAAct = diffA > 0 ? `<span style="color:${buyColor}; font-weight: 700;">買入 ${Math.abs(diffA).toFixed(2)} K USD</span>` : `<span style="color:${sellColor}; font-weight: 700;">賣出 ${Math.abs(diffA).toFixed(2)} K USD</span>`;
-            const assetBAct = diffB > 0 ? `<span style="color:${buyColor}; font-weight: 700;">買入 ${Math.abs(diffB).toFixed(2)} K USD</span>` : `<span style="color:${sellColor}; font-weight: 700;">賣出 ${Math.abs(diffB).toFixed(2)} K USD</span>`;
-
-            actionSteps.innerHTML = `
-                <strong>【再平衡操作】</strong><br>
-                為咗達到 ${targetA_pct}/${targetB_pct} 比例，你需要執行以下倉位調整：<br>
-                1. ${assetAName}: ${assetAAct}<br>
-                2. ${assetBName}: ${assetBAct}
-                `;
-        } else {
-            actionSteps.style.display = "none";
-        }
-
-        // --- 月供分配建議 ---
-        let dcaMsg = "";
-
-        if (dcaAmount > 0) {
-            if (needsRebalance) {
-                let underWeightAsset = (assetAPct < targetA_pct) ? assetAName : assetBName;
-                
-                dcaAdvice.className = "dca-advice status-warn"; // 比例偏離時用 Warn 顏色
-
-                dcaMsg = `
-                    <strong>【月供建議 - 修正】</strong><br>
-                    由於倉位嚴重偏離目標，建議將 **100%** (${dcaAmount.toFixed(2)} K USD) 的月供全部投入：
-                    <br> - **${underWeightAsset}**
-                    <br><small style="color:var(--text-secondary);">（修正目標：利用新資金逐步調整，直至整體比例回到 ${targetA_pct}/${targetB_pct} 範圍為止。）</small>
-                `;
+        function toggleThemeClasses(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark-mode');
+                document.body.classList.add('dark-mode');
+                document.documentElement.style.colorScheme = 'dark';
+                if(metaThemeColor) metaThemeColor.setAttribute('content', '#1e2024');
             } else {
-                const dcaA = dcaAmount * (targetA_pct / 100);
-                const dcaB = dcaAmount * (targetB_pct / 100);
-                
-                dcaAdvice.className = "dca-advice status-ok"; // 比例健康時用 OK 顏色
-
-                dcaMsg = `
-                    <strong>【月供建議 - 正常】</strong><br>
-                    目前嘅倉位比例健康，建議月供按目標 ${targetA_pct}/${targetB_pct} 比例分配：
-                    <br> - ${assetAName} ${targetA_pct}% (${dcaA.toFixed(2)} K USD)
-                    <br> - ${assetBName} ${targetB_pct}% (${dcaB.toFixed(2)} K USD)
-                `;
+                document.documentElement.classList.remove('dark-mode');
+                document.body.classList.remove('dark-mode');
+                document.documentElement.style.colorScheme = 'light';
+                if(metaThemeColor) metaThemeColor.setAttribute('content', '#e3e7ee');
             }
-        } else {
-            dcaAdvice.className = "dca-advice status-ok";
-            dcaMsg = "請設定每月供款金額 (K 美元) 以獲取月供分配建議。";
         }
 
-        dcaAdvice.innerHTML = dcaMsg;
-    }
-</script>
+        initThemeByTime();
+        function initThemeByTime() {
+            const currentHour = new Date().getHours();
+            const isDark = (currentHour >= 19 || currentHour < 7);
+            toggleThemeClasses(isDark);
+        }
 
+        themeToggle.addEventListener('click', () => {
+            const isCurrentlyDark = document.documentElement.classList.contains('dark-mode');
+            toggleThemeClasses(!isCurrentlyDark);
+        });
+
+        const inputIds = ['buyPrice', 'sellPrice', 'shares'];
+        inputIds.forEach(id => {
+            const inputEl = document.getElementById(id);
+            inputEl.addEventListener('click', (e) => {
+                e.stopPropagation();
+                inputIds.forEach(i => document.getElementById(i).classList.remove('focused'));
+                currentActiveInput = inputEl;
+                inputEl.classList.add('focused');
+                padTargetLabel.textContent = `INPUTTING: ${inputEl.previousElementSibling.textContent}`;
+                document.body.classList.add('keyboard-open');
+                customPad.classList.add('open');
+            });
+        });
+
+        document.addEventListener('click', (e) => { if (!customPad.contains(e.target)) closePad(); });
+        function closePad() {
+            customPad.classList.remove('open');
+            document.body.classList.remove('keyboard-open');
+            inputIds.forEach(i => document.getElementById(i).classList.remove('focused'));
+            currentActiveInput = null;
+        }
+
+        function tapKey(key) {
+            if (!currentActiveInput) return;
+            let val = currentActiveInput.value;
+            if (key === 'backspace') currentActiveInput.value = val.slice(0, -1);
+            else if (key === '.') { if (currentActiveInput.id !== 'shares' && !val.includes('.')) currentActiveInput.value = val + '.'; }
+            else currentActiveInput.value = val + key;
+            calculate();
+        }
+
+        function resetAll() {
+            inputIds.forEach(id => document.getElementById(id).value = '');
+            calculate();
+        }
+
+        function adjustSL(val) {
+            stopLossPercent = parseFloat((stopLossPercent + val).toFixed(1));
+            if (stopLossPercent > 0) stopLossPercent = 0; 
+            document.getElementById('slPercentDisplay').textContent = stopLossPercent.toFixed(1) + '%';
+            calculate();
+        }
+
+        function calculate() {
+            const buyPrice = parseFloat(document.getElementById('buyPrice').value) || 0;
+            const sellPrice = parseFloat(document.getElementById('sellPrice').value) || 0;
+            const shares = parseFloat(document.getElementById('shares').value) || 0;
+            const lcdStatus = document.getElementById('lcdStatus');
+
+            if (buyPrice > 0) {
+                const slPrice = buyPrice * (1 + (stopLossPercent / 100));
+                document.getElementById('slPriceDisplay').textContent = '$' + slPrice.toFixed(2);
+            } else {
+                document.getElementById('slPriceDisplay').textContent = '$0.00';
+            }
+
+            if (shares <= 0 || buyPrice <= 0) {
+                document.getElementById('totalCostDisplay').textContent = '$0.00';
+                document.getElementById('netProfitDisplay').textContent = '$0.00';
+                document.getElementById('buyFeeDisplay').textContent = '$0.00';
+                document.getElementById('sellFeeDisplay').textContent = '$0.00';
+                document.getElementById('totalFeeDisplay').textContent = '$0.00';
+                lcdStatus.textContent = "NET PROFIT";
+                lcdScreen.classList.remove('is-loss');
+                return;
+            }
+
+            const buyAmount = buyPrice * shares;
+            const sellAmount = sellPrice * shares;
+            let buyComm = Math.max(0.99, Math.min(0.005 * buyAmount, 0.0049 * shares));
+            let buyPlatform = Math.max(1.00, Math.min(0.005 * buyAmount, 0.005 * shares));
+            const totalBuyFees = buyComm + buyPlatform + (0.003 * shares) + (0.000003 * shares);
+
+            const totalCost = buyAmount + totalBuyFees;
+            document.getElementById('totalCostDisplay').textContent = '$' + totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+            let totalSellFees = 0;
+            if (sellPrice > 0) {
+                let sellComm = Math.max(0.99, Math.min(0.005 * sellAmount, 0.0049 * shares));
+                let sellPlatform = Math.max(1.00, Math.min(0.005 * sellAmount, 0.005 * shares));
+                const sellSettlement = 0.003 * shares;
+                const sellSec = Math.max(0.01, 0.0000206 * sellAmount);
+                const sellTaf = Math.max(0.01, Math.min(9.79, 0.000195 * shares));
+                totalSellFees = sellComm + sellPlatform + sellSettlement + sellSec + sellTaf + (0.000003 * shares);
+            }
+
+            const netProfit = sellPrice > 0 ? (sellAmount - buyAmount - totalBuyFees - totalSellFees) : 0;
+            document.getElementById('buyFeeDisplay').textContent = '$' + totalBuyFees.toFixed(2);
+            document.getElementById('sellFeeDisplay').textContent = '$' + totalSellFees.toFixed(2);
+            document.getElementById('totalFeeDisplay').textContent = '$' + (totalBuyFees + totalSellFees).toFixed(2);
+
+            const profitDisplay = document.getElementById('netProfitDisplay');
+            if (sellPrice === 0) {
+                profitDisplay.textContent = '$0.00';
+                lcdStatus.textContent = "NET PROFIT";
+                lcdScreen.classList.remove('is-loss');
+            } else {
+                const profitPercent = (netProfit / totalCost) * 100;
+                if (netProfit >= 0) {
+                    profitDisplay.textContent = '$' + netProfit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    lcdStatus.textContent = "PROFIT [+ " + profitPercent.toFixed(2) + "%]";
+                    lcdScreen.classList.remove('is-loss');
+                } else {
+                    profitDisplay.textContent = '$' + Math.abs(netProfit).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    lcdStatus.textContent = "LOSS [- " + Math.abs(profitPercent).toFixed(2) + "%]";
+                    lcdScreen.classList.add('is-loss');
+                }
+            }
+        }
+    </script>
 </body>
 </html>
-
-
