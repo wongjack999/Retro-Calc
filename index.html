@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -11,6 +11,16 @@
     
     <title>CASIO STYLE TRADING CALCULATOR V3.8</title>
     <style>
+        /* Safari 修正：禁止全頁彈跳與選取 */
+        html, body {
+            overflow: hidden;
+            overscroll-behavior: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
         /* LIGHT MODE */
         :root {
             --bg-color: #e3e7ee;
@@ -20,7 +30,7 @@
             --text-muted: #5a6578;
             --shadow-dark: #b8c2d1;
             --shadow-light: #ffffff;
-            --loss-red: #d32f2f; /* 警示紅 */
+            --loss-red: #d32f2f;
             --lcd-bg: #a3b899; 
             --lcd-text: #1a2515;
         }
@@ -34,7 +44,7 @@
             --text-muted: #a0aec0;
             --shadow-dark: #131518;
             --shadow-light: #313642;
-            --loss-red: #ff6b6b; /* 警示紅 */
+            --loss-red: #ff6b6b;
             --lcd-bg: #15171c;
             --lcd-text: #ff761a;
         }
@@ -46,7 +56,7 @@
             font-family: ui-monospace, "SF Mono", Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", monospace;
             font-weight: 600; 
             text-transform: uppercase; 
-            transition: all 0.3s ease; /* 加快所有過渡效果 */
+            transition: all 0.3s ease;
         }
 
         html { background-color: var(--bg-color) !important; height: 100%; color-scheme: light; }
@@ -57,9 +67,9 @@
             display: flex;
             justify-content: center;
             align-items: center; 
-            min-height: 100vh;
-            padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)) 20px;
-            overflow: hidden; 
+            /* 修正：使用 100dvh 取代 100vh，解決 Safari 底部遮擋 */
+            height: 100dvh;
+            padding: 20px;
         }
 
         .calculator-casio {
@@ -73,7 +83,7 @@
             transform: translateY(0);
         }
 
-        body.keyboard-open .calculator-casio { transform: translateY(-60px); }
+        body.keyboard-open .calculator-casio { transform: translateY(-40px); }
 
         .casio-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 0 2px; }
         .brand-logo { font-size: 1.25rem; letter-spacing: 1.5px; color: var(--text-color) !important; }
@@ -94,11 +104,8 @@
             overflow: hidden; 
         }
 
-        /* 警示模式：當觸發 loss 時，將 LCD 內部所有文字變為紅色 */
         .lcd-screen.is-loss .result-title,
-        .lcd-screen.is-loss .profit-value {
-            color: var(--loss-red) !important;
-        }
+        .lcd-screen.is-loss .profit-value { color: var(--loss-red) !important; }
 
         .result-title { font-size: 0.82rem; color: var(--lcd-text) !important; opacity: 0.85; letter-spacing: 1px; margin-bottom: 8px; white-space: nowrap; }
         .profit-display-container { display: flex; justify-content: flex-end; align-items: baseline; color: var(--lcd-text) !important; width: 100%; }
@@ -136,7 +143,7 @@
         .tape-row { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted) !important; margin-bottom: 8px; letter-spacing: 0.5px; }
         .tape-total { color: var(--text-color) !important; border-top: 1px dashed var(--shadow-dark); padding-top: 8px; margin-top: 8px; }
 
-        .bottom-sheet-pad { position: fixed; bottom: 0; left: 0; right: 0; background: var(--case-color); border-top-left-radius: 26px; border-top-right-radius: 26px; box-shadow: 0 -8px 30px rgba(0,0,0,0.15); transform: translateY(100%); z-index: 9999; padding: 18px 24px calc(20px + env(safe-area-inset-bottom)) 24px; }
+        .bottom-sheet-pad { position: fixed; bottom: 0; left: 0; right: 0; background: var(--case-color); border-top-left-radius: 26px; border-top-right-radius: 26px; box-shadow: 0 -8px 30px rgba(0,0,0,0.15); transform: translateY(100%); z-index: 9999; padding: 18px 24px 20px 24px; }
         html.dark-mode .bottom-sheet-pad { box-shadow: 0 -8px 30px rgba(0,0,0,0.4); }
         .bottom-sheet-pad.open { transform: translateY(0); }
         .pad-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
@@ -153,7 +160,7 @@
 
     <div class="calculator-casio">
         <div class="casio-top">
-            <div class="brand-logo">Calc <span>FT-26</span></div>
+            <div class="brand-logo">CASIO <span>ST-26</span></div>
             <div class="solar-panel">
                 <div class="solar-grid"></div><div class="solar-grid"></div><div class="solar-grid"></div><div class="solar-grid"></div>
             </div>
