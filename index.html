@@ -10,87 +10,35 @@
     
     <title>CALC MK-26</title>
     <style>
-        /* CSS Reset & 核心設定 */
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg-color);
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            -webkit-user-select: none;
-            touch-action: manipulation;
-        }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--bg-color); -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+        :root { --bg-color: #e3e7ee; --case-color: #e8ecf3; --primary-orange: #ff6f00; --text-color: #2d3748; --text-muted: #5a6578; --shadow-dark: #b8c2d1; --shadow-light: #ffffff; --loss-red: #d32f2f; --lcd-bg: #a3b899; --lcd-text: #1a2515; }
+        html.dark-mode { --bg-color: #1e2024; --case-color: #252830; --primary-orange: #ff761a; --text-color: #e2e8f0; --text-muted: #a0aec0; --shadow-dark: #131518; --shadow-light: #313642; --loss-red: #ff6b6b; --lcd-bg: #15171c; --lcd-text: #ff761a; }
+        
+        body { display: flex; flex-direction: column; align-items: center; min-height: 100dvh; padding: 20px; overflow-y: auto; }
+        * { box-sizing: border-box; font-family: ui-monospace, "SF Mono", Menlo, Monaco, monospace; font-weight: 600; text-transform: uppercase; transition: all 0.3s ease; }
 
-        :root {
-            --bg-color: #e3e7ee;
-            --case-color: #e8ecf3;
-            --primary-orange: #ff6f00; 
-            --text-color: #2d3748;
-            --text-muted: #5a6578;
-            --shadow-dark: #b8c2d1;
-            --shadow-light: #ffffff;
-            --loss-red: #d32f2f;
-            --lcd-bg: #a3b899; 
-            --lcd-text: #1a2515;
-        }
+        .calculator-casio { background: var(--case-color); width: 100%; max-width: 440px; padding: 24px 20px; border-radius: 26px; box-shadow: 15px 15px 30px var(--shadow-dark), -15px -15px 30px var(--shadow-light); border: 4px solid var(--case-color); margin-top: 20px; }
 
-        html.dark-mode {
-            --bg-color: #1e2024;
-            --case-color: #252830;
-            --primary-orange: #ff761a;
-            --text-color: #e2e8f0;
-            --text-muted: #a0aec0;
-            --shadow-dark: #131518;
-            --shadow-light: #313642;
-            --loss-red: #ff6b6b;
-            --lcd-bg: #15171c;
-            --lcd-text: #ff761a;
-        }
-
-        /* 核心改動：改為 Flex column 並允許捲動 */
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start; /* 頂部對齊，解決變形問題 */
-            min-height: 100dvh;
-            padding: 20px;
-            padding-bottom: 300px; /* 預留底部鍵盤空間 */
-            overflow-y: auto;      /* 內容太多時自動捲動 */
-        }
-
-        * {
-            box-sizing: border-box;
-            font-family: ui-monospace, "SF Mono", Menlo, Monaco, monospace;
-            font-weight: 600; 
-            text-transform: uppercase; 
-            transition: all 0.3s ease;
-        }
-
-        .calculator-casio {
-            background: var(--case-color);
-            width: 100%;
-            max-width: 440px;
-            padding: 24px 20px; 
-            border-radius: 26px;
-            box-shadow: 15px 15px 30px var(--shadow-dark), -15px -15px 30px var(--shadow-light);
-            border: 4px solid var(--case-color);
-            margin-top: 20px; /* 加入少少頂部間距 */
-        }
-
+        /* Top Header */
         .casio-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 2px; }
         .brand-logo { font-size: 1.25rem; letter-spacing: 1.5px; color: var(--text-color) !important; }
         .brand-logo span { font-size: 0.7rem; vertical-align: super; margin-left: 2px; }
+        .header-right { display: flex; align-items: center; gap: 15px; }
 
-        .solar-panel { background: #3b2314; width: 80px; height: 22px; border-radius: 4px; display: flex; gap: 3px; padding: 3px; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.4); }
-        .solar-grid { flex: 1; background: #5c3a21; opacity: 0.8; border-right: 1px solid #22120a; }
+        /* 擬物風 Toggle Switch */
+        .skeu-toggle { position: relative; width: 50px; height: 26px; border-radius: 13px; cursor: pointer; background: var(--case-color); box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light); }
+        .skeu-thumb { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #e8ecf3; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); }
+        html.dark-mode .skeu-toggle { background: var(--case-color); }
+        html.dark-mode .skeu-thumb { transform: translateX(24px); background: var(--primary-orange); box-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
 
-        .lcd-screen { background: var(--lcd-bg); padding: 16px; border-radius: 14px; box-shadow: inset 4px 4px 8px rgba(0,0,0,0.25); margin-bottom: 20px; text-align: right; border: 3px solid rgba(0, 0, 0, 0.05); overflow: hidden; }
+        /* LCD & UI */
+        .lcd-screen { background: var(--lcd-bg); padding: 16px; border-radius: 14px; box-shadow: inset 4px 4px 8px rgba(0,0,0,0.25); margin-bottom: 20px; text-align: right; border: 3px solid rgba(0, 0, 0, 0.05); }
         .lcd-screen.is-loss .result-title, .lcd-screen.is-loss .profit-value { color: var(--loss-red) !important; }
         .result-title { font-size: 0.75rem; color: var(--lcd-text) !important; opacity: 0.85; margin-bottom: 4px; }
-        .profit-value { font-size: 2rem; color: var(--lcd-text) !important; }
+        .profit-value { font-size: 2rem; color: var(--lcd-text) !important; margin-bottom: 8px; }
+        
+        .lcd-fees-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 6px; }
+        .fee-item { font-size: 0.5rem; color: var(--lcd-text) !important; opacity: 0.7; text-align: center; }
 
         .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
         .casio-field { display: flex; flex-direction: column; }
@@ -98,30 +46,18 @@
         .casio-field input { width: 100%; padding: 12px 5px; border: none; border-radius: 10px; background: var(--case-color); color: var(--text-color) !important; font-size: 1rem; text-align: center; outline: none; box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light); }
         .casio-field input.focused { color: var(--primary-orange) !important; box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); }
 
-        .control-row { display: grid; grid-template-columns: 1.3fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .control-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .casio-btn-block { background: var(--case-color); padding: 12px; border-radius: 16px; box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .block-title { font-size: 0.7rem; color: var(--text-muted) !important; margin-bottom: 4px; }
+        .block-title { font-size: 0.7rem; color: var(--text-muted) !important; margin-bottom: 6px; }
         .block-value { font-size: 1rem; color: var(--text-color) !important; margin-bottom: 6px; }
 
         .btn-casio-key { border: none; background: var(--case-color); color: var(--text-color) !important; width: 32px; height: 26px; border-radius: 6px; font-size: 0.7rem; cursor: pointer; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); }
-        .ios-toggle-switch { position: relative; width: 44px; height: 24px; border-radius: 12px; background: #cbd5e1; cursor: pointer; margin-bottom: 6px; }
-        html.dark-mode .ios-toggle-switch { background: var(--primary-orange); }
-        .ios-switch-thumb { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: #ffffff; }
-        html.dark-mode .ios-switch-thumb { transform: translateX(20px); }
-        .btn-reset { border: none; background: var(--case-color); color: var(--loss-red) !important; padding: 4px 12px; border-radius: 6px; font-size: 0.65rem; cursor: pointer; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); }
+        .btn-reset { border: none; background: var(--case-color); color: var(--loss-red) !important; padding: 6px 12px; border-radius: 8px; font-size: 0.65rem; cursor: pointer; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); margin-top: 4px; }
 
-        .paper-tape { background: var(--case-color); padding: 14px; border-radius: 14px; box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light); }
-        .tape-row { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted) !important; margin-bottom: 6px; }
-        .tape-total { color: var(--text-color) !important; border-top: 1px dashed var(--shadow-dark); padding-top: 6px; margin-top: 4px; }
-
-        .bottom-sheet-pad { position: fixed; bottom: 0; left: 0; right: 0; background: var(--case-color); border-top-left-radius: 20px; border-top-right-radius: 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); transform: translateY(100%); z-index: 9999; padding: 16px 20px; transition: transform 0.3s ease; }
-        .bottom-sheet-pad.open { transform: translateY(0); }
-        
-        .pad-header { display: flex; justify-content: flex-end; margin-bottom: 10px; }
-        .btn-done-pad { border: none; background: var(--case-color); color: var(--primary-orange) !important; padding: 6px 16px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); }
-
-        .pad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .pad-key { border: none; background: var(--case-color); color: var(--text-color) !important; padding: 14px 0; font-size: 1.2rem; border-radius: 10px; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); }
+        /* Integrated Keypad */
+        .pad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+        .pad-key { border: none; background: var(--case-color); color: var(--text-color) !important; padding: 14px 0; font-size: 1.2rem; border-radius: 10px; box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light); cursor: pointer; }
+        .pad-key:active { box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); }
         .pad-delete { color: var(--loss-red) !important; }
     </style>
 </head>
@@ -129,13 +65,20 @@
 
     <div class="calculator-casio">
         <div class="casio-top">
-            <div class="brand-logo">CALC <span>MK-26</span></div>
-            <div class="solar-panel"><div class="solar-grid"></div><div class="solar-grid"></div><div class="solar-grid"></div><div class="solar-grid"></div></div>
+            <div class="brand-logo">CALC <span>STOCK-26</span></div>
+            <div class="header-right">
+                <div class="skeu-toggle" id="themeToggle"><div class="skeu-thumb"></div></div>
+            </div>
         </div>
         
         <div class="lcd-screen" id="lcdScreen">
             <div class="result-title" id="lcdStatus">NET PROFIT</div>
             <div class="profit-value" id="netProfitDisplay">$0.00</div>
+            <div class="lcd-fees-grid">
+                <div class="fee-item">BUY: <span id="buyFeeLcd">$0.00</span></div>
+                <div class="fee-item">SELL: <span id="sellFeeLcd">$0.00</span></div>
+                <div class="fee-item">TOTAL: <span id="totalFeeLcd">$0.00</span></div>
+            </div>
         </div>
         
         <div class="input-grid">
@@ -154,24 +97,12 @@
                 </div>
             </div>
             <div class="casio-btn-block">
-                <div class="block-title">DARK MODE</div>
-                <div class="ios-toggle-switch" id="themeToggle"><div class="ios-switch-thumb"></div></div>
+                <div class="block-title">BUY COST</div>
+                <div class="block-value" id="buyCostDisplay">$0.00</div>
                 <button class="btn-reset" onclick="resetAll()">RESET</button>
             </div>
         </div>
 
-        <div class="paper-tape">
-            <div class="tape-row"><span>BUY COST:</span><span id="totalCostDisplay">$0.00</span></div>
-            <div class="tape-row"><span>BUY FEE:</span><span id="buyFeeDisplay">$0.00</span></div>
-            <div class="tape-row"><span>SELL FEE:</span><span id="sellFeeDisplay">$0.00</span></div>
-            <div class="tape-row tape-total"><span>TOTAL FEE:</span><span id="totalFeeDisplay">$0.00</span></div>
-        </div>
-    </div>
-
-    <div class="bottom-sheet-pad" id="customPad">
-        <div class="pad-header">
-            <button class="btn-done-pad" onclick="closePad()">DONE</button>
-        </div>
         <div class="pad-grid">
             <button class="pad-key" onclick="tapKey('1')">1</button><button class="pad-key" onclick="tapKey('2')">2</button><button class="pad-key" onclick="tapKey('3')">3</button>
             <button class="pad-key" onclick="tapKey('4')">4</button><button class="pad-key" onclick="tapKey('5')">5</button><button class="pad-key" onclick="tapKey('6')">6</button>
@@ -181,10 +112,9 @@
     </div>
 
     <script>
-        // JS 邏輯不變
         let stopLossPercent = -5.0;
         let currentActiveInput = null;
-        
+
         document.getElementById('themeToggle').addEventListener('click', () => {
             document.documentElement.classList.toggle('dark-mode');
             document.body.classList.toggle('dark-mode');
@@ -195,14 +125,8 @@
                 document.querySelectorAll('input').forEach(i => i.classList.remove('focused'));
                 e.target.classList.add('focused');
                 currentActiveInput = e.target;
-                document.getElementById('customPad').classList.add('open');
             });
         });
-
-        function closePad() {
-            document.getElementById('customPad').classList.remove('open');
-            document.querySelectorAll('input').forEach(i => i.classList.remove('focused'));
-        }
 
         function tapKey(key) {
             if (!currentActiveInput) return;
@@ -233,17 +157,23 @@
             
             const buyAmount = buyPrice * shares;
             const sellAmount = sellPrice * shares;
-            const totalBuyFees = buyAmount > 0 ? (Math.max(0.99, Math.min(0.005 * buyAmount, 0.0049 * shares)) + Math.max(1.00, Math.min(0.005 * buyAmount, 0.005 * shares)) + (0.003 * shares) + (0.000003 * shares)) : 0;
+            
+            const buyComm = Math.max(0.99, Math.min(0.005 * buyAmount, 0.0049 * shares));
+            const buyPlatform = Math.max(1.00, Math.min(0.005 * buyAmount, 0.005 * shares));
+            const totalBuyFees = buyAmount > 0 ? (buyComm + buyPlatform + (0.003 * shares) + (0.000003 * shares)) : 0;
+            const totalCost = buyAmount + totalBuyFees;
             
             let totalSellFees = 0;
             if (sellPrice > 0) {
-                totalSellFees = Math.max(0.99, Math.min(0.005 * sellAmount, 0.0049 * shares)) + Math.max(1.00, Math.min(0.005 * sellAmount, 0.005 * shares)) + (0.003 * shares) + Math.max(0.01, 0.0000206 * sellAmount) + Math.max(0.01, Math.min(9.79, 0.000195 * shares)) + (0.000003 * shares);
+                const sellComm = Math.max(0.99, Math.min(0.005 * sellAmount, 0.0049 * shares));
+                const sellPlatform = Math.max(1.00, Math.min(0.005 * sellAmount, 0.005 * shares));
+                totalSellFees = sellComm + sellPlatform + (0.003 * shares) + Math.max(0.01, 0.0000206 * sellAmount) + Math.max(0.01, Math.min(9.79, 0.000195 * shares)) + (0.000003 * shares);
             }
 
-            document.getElementById('totalCostDisplay').textContent = '$' + (buyAmount + totalBuyFees).toFixed(2);
-            document.getElementById('buyFeeDisplay').textContent = '$' + totalBuyFees.toFixed(2);
-            document.getElementById('sellFeeDisplay').textContent = '$' + totalSellFees.toFixed(2);
-            document.getElementById('totalFeeDisplay').textContent = '$' + (totalBuyFees + totalSellFees).toFixed(2);
+            document.getElementById('buyCostDisplay').textContent = '$' + totalCost.toFixed(2);
+            document.getElementById('buyFeeLcd').textContent = '$' + totalBuyFees.toFixed(2);
+            document.getElementById('sellFeeLcd').textContent = '$' + totalSellFees.toFixed(2);
+            document.getElementById('totalFeeLcd').textContent = '$' + (totalBuyFees + totalSellFees).toFixed(2);
 
             const netProfit = sellPrice > 0 ? (sellAmount - buyAmount - totalBuyFees - totalSellFees) : 0;
             const profitDisplay = document.getElementById('netProfitDisplay');
@@ -252,7 +182,7 @@
 
             if (sellPrice > 0) {
                 profitDisplay.textContent = '$' + Math.abs(netProfit).toFixed(2);
-                lcdStatus.textContent = (netProfit >= 0 ? 'PROFIT' : 'LOSS') + ' [' + ((netProfit / (buyAmount + totalBuyFees)) * 100).toFixed(2) + '%]';
+                lcdStatus.textContent = (netProfit >= 0 ? 'PROFIT' : 'LOSS') + ' [' + ((netProfit / totalCost) * 100).toFixed(2) + '%]';
                 lcdScreen.classList.toggle('is-loss', netProfit < 0);
             } else {
                 profitDisplay.textContent = '$0.00';
