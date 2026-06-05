@@ -34,9 +34,9 @@
         .brand-logo span { font-size: 0.7rem; vertical-align: super; margin-left: 2px; }
         .top-controls { display: flex; align-items: center; height: 100%; }
         
-        /* 👑 升級：大氣拉長版太陽能板切換器 */
+        /* 矽晶太陽能面板切換器 */
         .switch-container { 
-            width: 86px; /* 拉長視覺比例，更顯高檔 */
+            width: 86px; 
             height: 26px; 
             border-radius: 6px; 
             background: linear-gradient(180deg, #2d1916 0%, #1a0d0b 100%); 
@@ -47,44 +47,27 @@
             flex-shrink: 0; 
             overflow: hidden; 
         }
-        /* 太陽能矽晶片線條優化 */
         .solar-cells { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: space-evenly; pointer-events: none; z-index: 0; }
         .solar-cells span { width: 1px; height: 100%; background: rgba(255, 255, 255, 0.05); box-shadow: -0.5px 0 0 rgba(0,0,0,0.5); }
         .switch-container::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 65%); pointer-events: none; z-index: 3; }
 
-        /* 微發光 Icon 定位調整 */
-        .switch-icon {
-            position: absolute;
-            top: 5px;
-            width: 14px;
-            height: 14px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2.5;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            z-index: 1;
-            pointer-events: none;
-            opacity: 0.9;
-        }
+        .switch-icon { position: absolute; top: 5px; width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; z-index: 1; pointer-events: none; opacity: 0.9; }
         .sun-icon { left: 10px; color: #ffb300; } 
         .moon-icon { right: 10px; color: #e2e8f0; } 
 
-        /* 長軌道金屬條紋滑塊 */
         .switch-thumb { position: absolute; top: 2px; left: 2px; width: 36px; height: 20px; border-radius: 4px; background: linear-gradient(180deg, #f3f4f6 0%, #c5cbd3 100%); box-shadow: 1px 1px 4px rgba(0,0,0,0.55), inset 1px 1px 0px #ffffff; transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; align-items: center; justify-content: center; z-index: 2; }
         .switch-thumb::before { content: ''; width: 10px; height: 11px; background: repeating-linear-gradient(90deg, #9ca3af, #9ca3af 2px, transparent 2px, transparent 4px); }
 
-        /* 精確計算過渡後的平移距離 (86px - 36px - 4px = 46px) */
         html.dark-mode .switch-thumb { transform: translateX(46px); background: linear-gradient(180deg, var(--primary-orange) 0%, #d45d00 100%); box-shadow: 0 0 6px rgba(255,111,0,0.45), inset 1px 1px 0px rgba(255,255,255,0.35); }
         html.dark-mode .switch-thumb::before { background: repeating-linear-gradient(90deg, #ffffff, #ffffff 2px, transparent 2px, transparent 4px); opacity: 0.7; }
 
-        /* 📱 iOS 大圓角優化：LCD 面板 */
+        /* LCD 面板 */
         .lcd-screen { 
             background-color: var(--lcd-bg); 
             background-image: radial-gradient(rgba(26, 37, 21, 0.07) 0.7px, transparent 0.7px);
             background-size: 2px 2px;
             padding: 20px; 
-            border-radius: 22px; /* 更溫潤嘅 iOS 圓角 */
+            border-radius: 22px; 
             box-shadow: inset 4px 4px 8px rgba(0,0,0,0.2); 
             margin-bottom: 20px; 
             text-align: right; 
@@ -99,68 +82,58 @@
         .result-title { font-size: 0.8rem; color: var(--lcd-text) !important; opacity: 0.8; margin-bottom: 4px; }
         .profit-value { font-size: 2.2rem; color: var(--lcd-text) !important; margin-bottom: 8px; }
         
+        /* LCD 底部一體化狀態列 */
         .lcd-fee-row { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 8px; margin-top: 6px; gap: 4px; }
         .fee-label { font-size: 0.6rem; color: var(--lcd-text) !important; opacity: 0.7; display: flex; align-items: center; }
         .info-icon { width: 14px; height: 14px; border: 1px solid var(--lcd-text); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; margin-left: 5px; cursor: pointer; opacity: 0.7; font-style: italic; }
         .fee-item-compact { font-size: 0.6rem; color: var(--lcd-text) !important; opacity: 0.7; }
         
-        .lcd-sl-group { display: flex; align-items: center; gap: 4px; font-size: 0.6rem; color: var(--lcd-text) !important; background: rgba(0,0,0,0.04); padding: 2px 6px; border-radius: 6px; }
-        .lcd-btn { background: rgba(0, 0, 0, 0.06); border: none; color: var(--lcd-text) !important; border-radius: 4px; width: 15px; height: 15px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.65rem; cursor: pointer; font-weight: bold; padding: 0; }
+        /* 👑 完美微調：移除背景色與邊距，加入相同的不透明度 */
+        .lcd-sl-group { display: flex; align-items: center; gap: 4px; font-size: 0.6rem; color: var(--lcd-text) !important; opacity: 0.7; }
+        .lcd-btn { background: rgba(0, 0, 0, 0.06); border: none; color: var(--lcd-text) !important; border-radius: 4px; width: 15px; height: 15px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.65rem; cursor: pointer; font-weight: bold; padding: 0; margin: 0 1px; }
         html.dark-mode .lcd-btn { background: rgba(255, 255, 255, 0.08); }
         .lcd-btn:active { background: rgba(0, 0, 0, 0.18); }
 
-        /* 📱 iOS 大圓角優化：Input Grid */
+        /* Input Grid */
         .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
         .casio-field label { font-size: 0.7rem; color: var(--text-muted) !important; margin-bottom: 6px; text-align: center; display: block; }
-        .casio-field input { width: 100%; padding: 14px 4px; border: none; border-radius: 14px; /* 升級圓角 */
-            background: var(--case-color); color: var(--text-color) !important; font-size: 1.1rem; text-align: center; outline: none; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); }
+        .casio-field input { width: 100%; padding: 14px 4px; border: none; border-radius: 14px; background: var(--case-color); color: var(--text-color) !important; font-size: 1.1rem; text-align: center; outline: none; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); }
         .casio-field input.focused { color: var(--primary-orange) !important; box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); }
 
-        /* 📱 iOS 大圓角優化：Pad Grid */
+        /* Pad Grid */
         .pad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        .pad-key { border: none; background: var(--case-color); color: var(--text-color) !important; padding: 16px 0; font-size: 1.3rem; border-radius: 14px; /* 升級圓角 */
-            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light); cursor: pointer; }
+        .pad-key { border: none; background: var(--case-color); color: var(--text-color) !important; padding: 16px 0; font-size: 1.3rem; border-radius: 14px; box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light); cursor: pointer; }
         .pad-key:active { box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light); }
         .pad-c { color: var(--accent-orange) !important; font-weight: 700; }
         .pad-fn { color: var(--text-muted) !important; font-weight: 700; font-size: 1.1rem; }
 
         .version-footer { margin-top: 24px; padding: 10px; font-size: 0.55rem; color: var(--text-muted); text-align: center; opacity: 0.7; }
 
-        /* 👑 擬真風格升級：Bottom Sheet */
+        /* Bottom Sheet */
         .sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); display: none; z-index: 99; opacity: 0; transition: opacity 0.3s ease; }
         .sheet-overlay.open { display: block; opacity: 1; }
         
         .bottom-sheet { 
             position: fixed; bottom: 0; left: 0; width: 100%; 
             background: var(--case-color); 
-            border-radius: 32px 32px 0 0; /* 超大高級 iOS 弧度 */
+            border-radius: 32px 32px 0 0; 
             padding: 16px 24px 24px 24px; 
             padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); 
             transform: translateY(100%); 
             transition: transform 0.35s cubic-bezier(0.15, 0.85, 0.2, 1); 
-            /* 立體上邊緣外陰影與內高光，製造外殼扣合層次 */
             box-shadow: 0 -10px 30px rgba(0,0,0,0.15), inset 0 1.5px 0px var(--shadow-light); 
             border-top: 1px solid rgba(0,0,0,0.05);
             z-index: 100; max-height: 85vh; overflow-y: auto; 
         }
         .bottom-sheet.open { transform: translateY(0); }
         
-        /* 下凹式擬真膠條把手 */
-        .sheet-handle { 
-            width: 42px; height: 5px; 
-            background: rgba(0, 0, 0, 0.12); 
-            border-radius: 3px; 
-            margin: 0 auto 22px auto; 
-            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.25), 0 1px 0px var(--shadow-light); 
-        }
+        .sheet-handle { width: 42px; height: 5px; background: rgba(0, 0, 0, 0.12); border-radius: 3px; margin: 0 auto 22px auto; box-shadow: inset 1px 1px 2px rgba(0,0,0,0.25), 0 1px 0px var(--shadow-light); }
         html.dark-mode .sheet-handle { background: rgba(255,255,255,0.15); box-shadow: inset 1px 1px 2px rgba(0,0,0,0.5), 0 1px 0px rgba(255,255,255,0.05); }
 
         .sheet-content h3 { margin: 0 0 18px 0; color: var(--text-color); font-size: 1.1rem; text-align: center; letter-spacing: 1px; }
         
-        /* 雕刻式副面板（表格容器） */
         .sheet-panel-debossed {
             background: rgba(0, 0, 0, 0.02);
-            /* 點陣微紋理同步注入副面板 */
             background-image: radial-gradient(rgba(0, 0, 0, 0.03) 0.6px, transparent 0.6px);
             background-size: 2px 2px;
             padding: 16px;
@@ -183,17 +156,8 @@
         .tier-header { font-weight: bold; color: var(--primary-orange); }
         .tier-header td { padding-top: 16px; border-bottom: 1px solid rgba(128,128,128,0.2); }
         
-        /* 擬真鍵盤同款實體橙色按鍵 */
-        .close-sheet { 
-            width: 100%; padding: 15px; border-radius: 14px; border: none; 
-            background: linear-gradient(180deg, var(--accent-orange) 0%, #d45d00 100%); 
-            color: white; font-size: 1.1rem; font-weight: bold; cursor: pointer;
-            box-shadow: 3px 3px 6px var(--shadow-dark), -2px -2px 4px var(--shadow-light), inset 0 1px 0 rgba(255,255,255,0.25); 
-        }
-        .close-sheet:active { 
-            box-shadow: inset 3px 3px 6px rgba(0,0,0,0.3), inset -1px -1px 2px rgba(255,255,255,0.1); 
-            background: linear-gradient(180deg, #d45d00 0%, #b34e00 100%);
-        }
+        .close-sheet { width: 100%; padding: 15px; border-radius: 14px; border: none; background: linear-gradient(180deg, var(--accent-orange) 0%, #d45d00 100%); color: white; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 3px 3px 6px var(--shadow-dark), -2px -2px 4px var(--shadow-light), inset 0 1px 0 rgba(255,255,255,0.25); }
+        .close-sheet:active { box-shadow: inset 3px 3px 6px rgba(0,0,0,0.3), inset -1px -1px 2px rgba(255,255,255,0.1); background: linear-gradient(180deg, #d45d00 0%, #b34e00 100%); }
     </style>
 </head>
 <body>
@@ -204,22 +168,8 @@
             <div class="top-controls">
                 <div class="switch-container" id="themeSwitch">
                     <div class="solar-cells"><span></span><span></span><span></span><span></span></div>
-                    
-                    <svg class="switch-icon sun-icon" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                    <svg class="switch-icon moon-icon" viewBox="0 0 24 24">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                    
+                    <svg class="switch-icon sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg class="switch-icon moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                     <div class="switch-thumb"></div>
                 </div>
             </div>
@@ -232,8 +182,9 @@
             <div class="lcd-fee-row">
                 <span class="fee-label">Fee <span class="info-icon" onclick="openSheet()">i</span></span>
                 <span class="fee-item-compact">Cost: <span id="buyCostDisplayLcd">$0.00</span></span>
+                
                 <div class="lcd-sl-group">
-                    <span>SL <span id="slPercentDisplay">-5.0%</span></span>
+                    <span>STOP LOSS <span id="slPercentDisplay">5.0%</span></span>
                     <button class="lcd-btn" onclick="adjustSL(-0.5)">-</button>
                     <button class="lcd-btn" onclick="adjustSL(0.5)">+</button>
                     <span id="slPriceDisplay">$0.00</span>
@@ -261,7 +212,7 @@
         </div>
 
         <div class="version-footer">
-            V4.3 | TOUCH-READY SKEUOMORPHIC UI
+            V4.4 | REFINED INDUSTRIAL LCD LAYOUT
         </div>
     </div>
 
@@ -270,20 +221,13 @@
         <div class="sheet-handle"></div>
         <div class="sheet-content">
             <h3>FEE DETAILS</h3>
-            
             <div class="sheet-panel-debossed">
                 <table class="fee-table">
-                    <thead>
-                        <tr><th>ITEM</th><th>DESCRIPTION</th></tr>
-                    </thead>
+                    <thead><tr><th>ITEM</th><th>DESCRIPTION</th></tr></thead>
                     <tbody>
-                        <tr style="font-weight: bold; color: var(--accent-orange); background: rgba(255,111,0,0.05); border-radius: 6px;">
-                            <td>TOTAL FEE</td>
-                            <td id="modalTotalFee">$0.00</td>
-                        </tr>
+                        <tr style="font-weight: bold; color: var(--accent-orange); background: rgba(255,111,0,0.05);"><td>TOTAL FEE</td><td id="modalTotalFee">$0.00</td></tr>
                         <tr><td>Buy Side Fee</td><td id="modalBuyFee">$0.00</td></tr>
                         <tr><td>Sell Side Fee</td><td id="modalSellFee">$0.00</td></tr>
-                        
                         <tr class="tier-header"><td colspan="2">Standard Benchmarks Reference</td></tr>
                         <tr><td>Commission</td><td>$0.0049/share (min $0.99)</td></tr>
                         <tr><td>Platform Fee</td><td>Tiered / share (min $1.00)</td></tr>
@@ -292,13 +236,13 @@
                     </tbody>
                 </table>
             </div>
-            
             <button class="close-sheet" onclick="closeSheet()">CLOSE</button>
         </div>
     </div>
 
     <script>
-        let stopLossPercent = -5.0;
+        // 👑 邏輯優化：改為以正數儲存 Stop Loss 百分比
+        let stopLossPercent = 5.0;
         let currentActiveInput = null;
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -314,17 +258,13 @@
         });
 
         function openSheet() {
-            const sheet = document.getElementById('feeSheet');
-            const overlay = document.getElementById('sheetOverlay');
-            sheet.classList.add('open');
-            overlay.classList.add('open');
+            document.getElementById('feeSheet').classList.add('open');
+            document.getElementById('sheetOverlay').classList.add('open');
         }
 
         function closeSheet() {
-            const sheet = document.getElementById('feeSheet');
-            const overlay = document.getElementById('sheetOverlay');
-            sheet.classList.remove('open');
-            overlay.classList.remove('open');
+            document.getElementById('feeSheet').classList.remove('open');
+            document.getElementById('sheetOverlay').classList.remove('open');
         }
 
         ['buyPrice', 'sellPrice', 'shares'].forEach(id => {
@@ -403,9 +343,10 @@
             }
         }
 
+        // 👑 調整按鍵邏輯：加減直接對應正數百分比
         function adjustSL(val) {
             stopLossPercent = parseFloat((stopLossPercent + val).toFixed(1));
-            if (stopLossPercent > 0) stopLossPercent = 0;
+            if (stopLossPercent < 0) stopLossPercent = 0;
             document.getElementById('slPercentDisplay').textContent = stopLossPercent.toFixed(1) + '%';
             calculate();
         }
@@ -428,8 +369,9 @@
             const sellPrice = parseFloat(document.getElementById('sellPrice').value) || 0;
             const shares = parseFloat(document.getElementById('shares').value) || 0;
             
+            // 👑 計算公式同步改為 (1 - stopLossPercent / 100)
             if (buyPrice > 0) {
-                document.getElementById('slPriceDisplay').textContent = '$' + (buyPrice * (1 + stopLossPercent / 100)).toFixed(2);
+                document.getElementById('slPriceDisplay').textContent = '$' + (buyPrice * (1 - stopLossPercent / 100)).toFixed(2);
             } else {
                 document.getElementById('slPriceDisplay').textContent = '$0.00';
             }
