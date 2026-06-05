@@ -13,7 +13,18 @@
         :root { --bg-color: #e3e7ee; --case-color: #e8ecf3; --primary-orange: #ff6f00; --text-color: #2d3748; --text-muted: #5a6578; --shadow-dark: #b8c2d1; --shadow-light: #ffffff; --accent-orange: #ff6f00; --lcd-bg: #a3b899; --lcd-loss-bg: #ffb885; --lcd-text: #1a2515; }
         html.dark-mode { --bg-color: #1e2024; --case-color: #252830; --primary-orange: #ff761a; --text-color: #e2e8f0; --text-muted: #a0aec0; --shadow-dark: #131518; --shadow-light: #313642; --accent-orange: #ff761a; --lcd-bg: #15171c; --lcd-loss-bg: #7c5836; --lcd-text: #ff761a; }
         
-        body { display: flex; flex-direction: column; align-items: center; min-height: 100dvh; padding: 24px; overflow-y: auto; }
+        body { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100dvh; 
+            /* 👑 核心修正：自動計算並保留手機頂部動態島與底部黑條的空間 */
+            padding-top: calc(20px + env(safe-area-inset-top, 0px));
+            padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+            padding-left: calc(24px + env(safe-area-inset-left, 0px));
+            padding-right: calc(24px + env(safe-area-inset-right, 0px));
+            overflow-y: auto; 
+        }
         * { box-sizing: border-box; font-family: ui-monospace, "SF Mono", Menlo, Monaco, monospace; font-weight: 600; text-transform: uppercase; transition: all 0.3s ease; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 
         .layout-container { width: 100%; max-width: 440px; }
@@ -50,7 +61,7 @@
         .casio-field input { width: 100%; padding: 14px 4px; border: none; border-radius: 10px; background: var(--case-color); color: var(--text-color) !important; font-size: 1.1rem; text-align: center; outline: none; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); }
         .casio-field input.focused { color: var(--primary-orange) !important; box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); }
 
-        /* Stop Loss Row */
+        /* Stop Loss Control Row */
         .control-row { margin-bottom: 20px; }
         .casio-btn-full { background: var(--case-color); padding: 16px; border-radius: 16px; box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .sl-info { display: flex; flex-direction: column; }
@@ -60,7 +71,7 @@
         .btn-casio-key { border: none; background: var(--case-color); color: var(--text-color) !important; width: 38px; height: 38px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); }
         .btn-casio-key:active { box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); }
 
-        /* Pad Grid (4x3 Clean Matrix) */
+        /* Pad Grid (Classic Clean 4x3 Grid) */
         .pad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
         .pad-key { border: none; background: var(--case-color); color: var(--text-color) !important; padding: 16px 0; font-size: 1.3rem; border-radius: 10px; box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light); cursor: pointer; }
         .pad-key:active { box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light); }
@@ -68,8 +79,8 @@
 
         .version-footer { margin-top: 24px; padding: 10px; font-size: 0.55rem; color: var(--text-muted); text-align: center; opacity: 0.7; }
 
-        /* Bottom Sheet */
-        .bottom-sheet { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--case-color); border-radius: 20px 20px 0 0; padding: 24px; transform: translateY(100%); transition: transform 0.3s ease-out; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 100; max-height: 80vh; overflow-y: auto; }
+        /* Bottom Sheet (彈出層也要避開底部黑條) */
+        .bottom-sheet { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--case-color); border-radius: 20px 20px 0 0; padding: 24px; padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateY(100%); transition: transform 0.3s ease-out; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 100; max-height: 80vh; overflow-y: auto; }
         .bottom-sheet.open { transform: translateY(0); }
         .sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 99; }
         .sheet-overlay.open { display: block; }
@@ -135,7 +146,7 @@
         </div>
 
         <div class="version-footer">
-            V3.5 | FIXED SMART AC/C INTERACTION
+            V3.6 | FIXED SAFE AREA FOR MOBILE WEB APP
         </div>
     </div>
 
@@ -197,11 +208,10 @@
                 document.querySelectorAll('input').forEach(i => i.classList.remove('focused'));
                 e.target.classList.add('focused');
                 currentActiveInput = e.target;
-                updateClearButton(); // Switch state immediately when changing input fields
+                updateClearButton();
             });
         });
 
-        // 🧠 新的修正邏輯：根據「當前Active框」與「整體狀態」切換
         function updateClearButton() {
             const clearBtn = document.getElementById('clearBtn');
             if (!currentActiveInput) return;
@@ -211,16 +221,11 @@
             const sell = document.getElementById('sellPrice').value;
             const qty = document.getElementById('shares').value;
 
-            // 1. 如果當前輸入框有字 -> 必然是 C (做個格的 Backspace)
             if (currentVal !== '') {
                 clearBtn.textContent = 'C';
-            } 
-            // 2. 如果當前框空咗，但其實其他框仲有數據 -> 變身成 AC (可以一鍵全清)
-            else if (buy !== '' || sell !== '' || qty !== '') {
+            } else if (buy !== '' || sell !== '' || qty !== '') {
                 clearBtn.textContent = 'AC';
-            } 
-            // 3. 乜都空晒嘅時候 -> 保持 C
-            else {
+            } else {
                 clearBtn.textContent = 'C';
             }
         }
@@ -247,13 +252,12 @@
             updateClearButton();
         }
 
-        // 執行按鍵動作
         function handleClear() {
             const clearBtn = document.getElementById('clearBtn');
             if (clearBtn.textContent === 'AC') {
-                resetAll(); // 全清
+                resetAll();
             } else {
-                backspace(); // 單格倒退
+                backspace();
             }
         }
 
