@@ -9,29 +9,32 @@
     
     <title>CALC Stock-26</title>
     <style>
-        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--bg-color); -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--bg-color); -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; touch-action: manipulation; -webkit-touch-callout: none; }
         :root { --bg-color: #e3e7ee; --case-color: #e8ecf3; --primary-orange: #ff6f00; --text-color: #2d3748; --text-muted: #5a6578; --shadow-dark: #b8c2d1; --shadow-light: #ffffff; --accent-orange: #ff6f00; --lcd-bg: #a3b899; --lcd-loss-bg: #ffb885; --lcd-text: #1a2515; }
         html.dark-mode { --bg-color: #1e2024; --case-color: #252830; --primary-orange: #ff761a; --text-color: #e2e8f0; --text-muted: #a0aec0; --shadow-dark: #131518; --shadow-light: #313642; --accent-orange: #ff761a; --lcd-bg: #15171c; --lcd-loss-bg: #7c5836; --lcd-text: #ff761a; }
         
         body { display: flex; flex-direction: column; align-items: center; min-height: 100dvh; padding: 24px; overflow-y: auto; }
-        * { box-sizing: border-box; font-family: ui-monospace, "SF Mono", Menlo, Monaco, monospace; font-weight: 600; text-transform: uppercase; transition: all 0.3s ease; }
+        * { box-sizing: border-box; font-family: ui-monospace, "SF Mono", Menlo, Monaco, monospace; font-weight: 600; text-transform: uppercase; transition: all 0.3s ease; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 
         .layout-container { width: 100%; max-width: 440px; }
 
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .brand-logo { font-size: 1.2rem; letter-spacing: 1.5px; color: var(--text-color) !important; }
         .brand-logo span { font-size: 0.7rem; vertical-align: super; margin-left: 2px; }
-        .skeu-toggle { position: relative; width: 50px; height: 26px; border-radius: 13px; cursor: pointer; background: var(--case-color); box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); }
-        .skeu-thumb { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #e8ecf3; box-shadow: 1px 1px 3px var(--shadow-dark), -1px -1px 3px var(--shadow-light); }
-        html.dark-mode .skeu-toggle { background: var(--case-color); }
-        html.dark-mode .skeu-thumb { transform: translateX(24px); background: var(--primary-orange); box-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
+        .top-controls { display: flex; align-items: center; gap: 15px; }
+        .led-group { display: flex; gap: 8px; }
+        .led-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .led { width: 8px; height: 8px; border-radius: 50%; background: #cbd5e0; box-shadow: inset 1px 1px 2px rgba(0,0,0,0.2); }
+        .led.active { background: var(--primary-orange); box-shadow: 0 0 6px var(--primary-orange); }
+        .led-label { font-size: 0.5rem; color: var(--text-muted); }
+        .switch-container { width: 44px; height: 24px; border-radius: 6px; background: var(--case-color); box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); cursor: pointer; position: relative; }
+        .switch-thumb { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 4px; background: var(--case-color); box-shadow: 1px 1px 2px var(--shadow-dark); transition: transform 0.3s ease; }
+        html.dark-mode .switch-thumb { transform: translateX(20px); background: var(--primary-orange); }
 
         .lcd-screen { background: var(--lcd-bg); padding: 20px; border-radius: 16px; box-shadow: inset 4px 4px 8px rgba(0,0,0,0.2); margin-bottom: 20px; text-align: right; }
         .lcd-screen.is-loss { background: var(--lcd-loss-bg); }
-        
         .result-title { font-size: 0.8rem; color: var(--lcd-text) !important; opacity: 0.8; margin-bottom: 4px; }
         .profit-value { font-size: 2.2rem; color: var(--lcd-text) !important; margin-bottom: 8px; }
-        
         .lcd-fee-row { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 8px; margin-top: 6px; }
         .fee-label { font-size: 0.6rem; color: var(--lcd-text) !important; opacity: 0.7; display: flex; align-items: center; }
         .info-icon { width: 14px; height: 14px; border: 1px solid var(--lcd-text); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; margin-left: 5px; cursor: pointer; opacity: 0.7; font-style: italic; }
@@ -42,33 +45,31 @@
         .casio-field input { width: 100%; padding: 14px 4px; border: none; border-radius: 10px; background: var(--case-color); color: var(--text-color) !important; font-size: 1.1rem; text-align: center; outline: none; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); }
         .casio-field input.focused { color: var(--primary-orange) !important; box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); }
 
-        .control-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .casio-btn-block { background: var(--case-color); padding: 14px; border-radius: 16px; box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .block-title { font-size: 0.75rem; color: var(--text-muted) !important; margin-bottom: 6px; }
-        .block-value { font-size: 1.1rem; color: var(--text-color) !important; margin-bottom: 6px; }
-
-        .btn-casio-key { border: none; background: var(--case-color); color: var(--text-color) !important; width: 36px; height: 30px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); }
-        .btn-reset { border: none; background: var(--case-color); color: var(--accent-orange) !important; padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; cursor: pointer; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); margin-top: 4px; }
+        .control-row { margin-bottom: 20px; }
+        .casio-btn-full { background: var(--case-color); padding: 16px; border-radius: 16px; box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .sl-info { display: flex; flex-direction: column; }
+        .sl-label { font-size: 0.65rem; color: var(--text-muted); }
+        .sl-value { font-size: 1.1rem; color: var(--text-color); }
+        .btn-group { display: flex; gap: 8px; align-items: center; }
+        .btn-casio-key { border: none; background: var(--case-color); color: var(--text-color) !important; width: 32px; height: 32px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); }
+        .btn-reset { border: none; background: var(--case-color); color: var(--accent-orange) !important; padding: 8px 12px; border-radius: 8px; font-size: 0.7rem; cursor: pointer; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); }
 
         .pad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
         .pad-key { border: none; background: var(--case-color); color: var(--text-color) !important; padding: 16px 0; font-size: 1.3rem; border-radius: 10px; box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light); cursor: pointer; }
         .pad-key:active { box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light); }
         .pad-c { color: var(--accent-orange) !important; }
 
-        /* Bottom Sheet */
+        .version-footer { margin-top: 24px; padding: 10px; font-size: 0.55rem; color: var(--text-muted); text-align: center; opacity: 0.7; }
+
         .bottom-sheet { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--case-color); border-radius: 20px 20px 0 0; padding: 24px; transform: translateY(100%); transition: transform 0.3s ease-out; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 100; max-height: 80vh; overflow-y: auto; }
         .bottom-sheet.open { transform: translateY(0); }
         .sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 99; }
         .sheet-overlay.open { display: block; }
-        
         .sheet-content h3 { margin: 0 0 15px 0; color: var(--text-color); font-size: 1.1rem; text-align: center; }
-        
-        /* 表格樣式 */
         .fee-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; color: var(--text-color); }
         .fee-table th { background: rgba(0,0,0,0.05); color: var(--text-muted); padding: 8px; text-align: left; }
         .fee-table td { padding: 8px; border-bottom: 1px solid rgba(128,128,128,0.2); }
         .tier-header { font-weight: bold; background: rgba(0,0,0,0.02); }
-        
         .close-sheet { width: 100%; padding: 12px; border-radius: 10px; border: none; background: var(--accent-orange); color: white; font-weight: bold; margin-top: 15px; cursor: pointer; }
     </style>
 </head>
@@ -77,7 +78,15 @@
     <div class="layout-container">
         <div class="top-bar">
             <div class="brand-logo">CALC <span>Stock-26</span></div>
-            <div class="skeu-toggle" id="themeToggle"><div class="skeu-thumb"></div></div>
+            <div class="top-controls">
+                <div class="led-group">
+                    <div class="led-item"><span class="led-label">LIGHT</span><div id="ledLight" class="led active"></div></div>
+                    <div class="led-item"><span class="led-label">DARK</span><div id="ledDark" class="led"></div></div>
+                </div>
+                <div class="switch-container" id="themeSwitch">
+                    <div class="switch-thumb"></div>
+                </div>
+            </div>
         </div>
         
         <div class="lcd-screen" id="lcdScreen">
@@ -85,9 +94,8 @@
             <div class="profit-value" id="netProfitDisplay">$0.00</div>
             <div class="lcd-fee-row">
                 <span class="fee-label">Fee <span class="info-icon" onclick="openSheet()">i</span></span>
-                <span class="fee-item-compact">Buy：<span id="buyFeeLcd">$0.00</span></span>
-                <span class="fee-item-compact">Sell：<span id="sellFeeLcd">$0.00</span></span>
-                <span class="fee-item-compact">Total：<span id="totalFeeLcd">$0.00</span></span>
+                <span class="fee-item-compact">Total: <span id="totalFeeLcd">$0.00</span></span>
+                <span class="fee-item-compact">Cost: <span id="buyCostDisplayLcd">$0.00</span></span>
             </div>
         </div>
         
@@ -98,18 +106,16 @@
         </div>
 
         <div class="control-row">
-            <div class="casio-btn-block">
-                <div class="block-title">SL (<span id="slPercentDisplay">-5.0%</span>)</div>
-                <div class="block-value" id="slPriceDisplay">$0.00</div>
-                <div style="display:flex; gap:10px;">
+            <div class="casio-btn-full">
+                <div class="sl-info">
+                    <div class="sl-label">STOP LOSS (<span id="slPercentDisplay">-5.0%</span>)</div>
+                    <div class="sl-value" id="slPriceDisplay">$0.00</div>
+                </div>
+                <div class="btn-group">
                     <button class="btn-casio-key" onclick="adjustSL(-0.5)">▼</button>
                     <button class="btn-casio-key" onclick="adjustSL(0.5)">▲</button>
+                    <button class="btn-reset" onclick="resetAll()">RESET</button>
                 </div>
-            </div>
-            <div class="casio-btn-block">
-                <div class="block-title">BUY COST</div>
-                <div class="block-value" id="buyCostDisplay">$0.00</div>
-                <button class="btn-reset" onclick="resetAll()">RESET</button>
             </div>
         </div>
 
@@ -119,35 +125,29 @@
             <button class="pad-key" onclick="tapKey('1')">1</button><button class="pad-key" onclick="tapKey('2')">2</button><button class="pad-key" onclick="tapKey('3')">3</button>
             <button class="pad-key" onclick="tapKey('.')">.</button><button class="pad-key" onclick="tapKey('0')">0</button><button class="pad-key pad-c" onclick="backspace()">C</button>
         </div>
+
+        <div class="version-footer">
+            V2.9 | UPDATED TO ENGLISH LABELS
+        </div>
     </div>
 
     <div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
     <div class="bottom-sheet" id="feeSheet">
         <div class="sheet-content">
-            <h3>美股和ETF收費詳情</h3>
+            <h3>FEE DETAILS</h3>
             <table class="fee-table">
-                <thead><tr><th>類型</th><th>費用</th></tr></thead>
+                <thead><tr><th>ITEM</th><th>DESCRIPTION</th></tr></thead>
                 <tbody>
-                    <tr><td>佣金</td><td>$0.0049/股<br><small>(最低$0.99)</small></td></tr>
-                    <tr><td>固定平台費</td><td>$0.005/股<br><small>(最低$1.00)</small></td></tr>
-                    <tr class="tier-header"><td colspan="2">階梯式平台費 (每股)</td></tr>
-                    <tr><td>1-500 股</td><td>$0.0100</td></tr>
-                    <tr><td>501-1,000 股</td><td>$0.0080</td></tr>
-                    <tr><td>1,001-5,000 股</td><td>$0.0070</td></tr>
-                    <tr><td>5,001-10,000 股</td><td>$0.0060</td></tr>
-                    <tr><td>10,001-50,000 股</td><td>$0.0055</td></tr>
-                    <tr><td>50,001-200,000 股</td><td>$0.0050</td></tr>
-                    <tr><td>200,001-500,000 股</td><td>$0.0045</td></tr>
-                    <tr><td>500,001-1,000,000 股</td><td>$0.0040</td></tr>
-                    <tr><td>1,000,001-5,000,000 股</td><td>$0.0035</td></tr>
-                    <tr><td>5,000,001 股以上</td><td>$0.0030</td></tr>
-                    <tr><td>交收費</td><td>$0.003/股</td></tr>
-                    <tr><td>證監會規費</td><td>成交額*0.0000206<br><small>(最低$0.01)</small></td></tr>
-                    <tr><td>交易活動費</td><td>$0.000195/股<br><small>(min$0.01, max$9.79)</small></td></tr>
-                    <tr><td>CAT費</td><td>$0.000003/股</td></tr>
+                    <tr><td><b>Buy Fee</b></td><td id="modalBuyFee">$0.00</td></tr>
+                    <tr><td><b>Sell Fee</b></td><td id="modalSellFee">$0.00</td></tr>
+                    <tr class="tier-header"><td colspan="2">Standard Fee Benchmarks</td></tr>
+                    <tr><td>Commission</td><td>$0.0049/share (min $0.99)</td></tr>
+                    <tr><td>Platform Fee</td><td>$0.005/share (min $1.00)</td></tr>
+                    <tr><td>Settlement Fee</td><td>$0.003/share</td></tr>
+                    <tr><td>Regulatory</td><td>SEC/TAF/CAT</td></tr>
                 </tbody>
             </table>
-            <button class="close-sheet" onclick="closeSheet()">CONFIRM</button>
+            <button class="close-sheet" onclick="closeSheet()">CLOSE</button>
         </div>
     </div>
 
@@ -155,10 +155,17 @@
         let stopLossPercent = -5.0;
         let currentActiveInput = null;
 
-        document.getElementById('themeToggle').addEventListener('click', () => {
+        document.getElementById('themeSwitch').addEventListener('click', () => {
             document.documentElement.classList.toggle('dark-mode');
             document.body.classList.toggle('dark-mode');
+            updateLEDs();
         });
+
+        function updateLEDs() {
+            const isDark = document.documentElement.classList.contains('dark-mode');
+            document.getElementById('ledLight').classList.toggle('active', !isDark);
+            document.getElementById('ledDark').classList.toggle('active', isDark);
+        }
 
         function openSheet() {
             document.getElementById('feeSheet').classList.add('open');
@@ -227,34 +234,26 @@
             const buyAmount = buyPrice * shares;
             const sellAmount = sellPrice * shares;
             
-            // Commission
             const comm = Math.max(0.99, shares * 0.0049);
-            // Platform
             const plat = Math.max(1.00, getPlatformRate(shares) * shares);
-            // Settlement
             const settle = shares * 0.003;
-            // CAT
             const cat = shares * 0.000003;
 
-            // Buy Fees
             const totalBuyFees = buyAmount > 0 ? (comm + plat + settle + cat) : 0;
             const totalCost = buyAmount + totalBuyFees;
             
-            // Sell Fees
             let totalSellFees = 0;
             if (sellPrice > 0) {
-                // SEC Fee (Sell only)
                 const sec = Math.max(0.01, sellAmount * 0.0000206);
-                // TAF Fee (Sell only)
                 const taf = Math.min(9.79, Math.max(0.01, shares * 0.000195));
-                
                 totalSellFees = comm + plat + settle + cat + sec + taf;
             }
 
-            document.getElementById('buyCostDisplay').textContent = '$' + totalCost.toFixed(2);
-            document.getElementById('buyFeeLcd').textContent = '$' + totalBuyFees.toFixed(2);
-            document.getElementById('sellFeeLcd').textContent = '$' + totalSellFees.toFixed(2);
+            document.getElementById('buyCostDisplayLcd').textContent = '$' + totalCost.toFixed(2);
             document.getElementById('totalFeeLcd').textContent = '$' + (totalBuyFees + totalSellFees).toFixed(2);
+            
+            document.getElementById('modalBuyFee').textContent = '$' + totalBuyFees.toFixed(2);
+            document.getElementById('modalSellFee').textContent = '$' + totalSellFees.toFixed(2);
 
             const netProfit = sellPrice > 0 ? (sellAmount - buyAmount - totalBuyFees - totalSellFees) : 0;
             const profitDisplay = document.getElementById('netProfitDisplay');
