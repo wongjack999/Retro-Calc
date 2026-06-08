@@ -9,9 +9,45 @@
     
     <title>CALC Stock-26</title>
     <style>
-        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--bg-color); -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; touch-action: manipulation; -webkit-touch-callout: none; }
-        :root { --bg-color: #e3e7ee; --case-color: #e8ecf3; --primary-orange: #ff6f00; --text-color: #2d3748; --text-muted: #5a6578; --shadow-dark: #b8c2d1; --shadow-light: #ffffff; --accent-orange: #ff6f00; --lcd-bg: #a3b899; --lcd-loss-bg: #ffb885; --lcd-text: #1a2515; }
-        html.dark-mode { --bg-color: #1e2024; --case-color: #252830; --primary-orange: #ff761a; --text-color: #e2e8f0; --text-muted: #a0aec0; --shadow-dark: #131518; --shadow-light: #313642; --accent-orange: #ff761a; --lcd-bg: #15171c; --lcd-loss-bg: #7c5836; --lcd-text: #ff761a; }
+        /* 👑 修正：移除 overflow: hidden，改為容許滾動，並利用 -webkit-overflow-scrolling 帶出 App 般嘅流暢滑動感 */
+        html, body { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            min-height: 100%;
+            background-color: var(--bg-color); 
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none; 
+            -webkit-user-select: none; 
+            -webkit-touch-callout: none; /* 禁用 iOS 長按選單 */
+        }
+        
+        /* 核心色彩變數 */
+        :root { 
+            --bg-color: #e3e7ee; 
+            --case-color: #e8ecf3; 
+            --primary-orange: #ff6f00; 
+            --text-color: #1e2530; 
+            --text-muted: #626e82; 
+            --shadow-dark: #b8c2d1; 
+            --shadow-light: #ffffff; 
+            --accent-orange: #ff6f00; 
+            --lcd-bg: #a3b899; 
+            --lcd-text: #162012; 
+            --transition-speed: 0.25s;
+        }
+        html.dark-mode { 
+            --bg-color: #1a1c20; 
+            --case-color: #22252d; 
+            --primary-orange: #ff761a; 
+            --text-color: #f1f5f9; 
+            --text-muted: #8e9cae; 
+            --shadow-dark: #111317; 
+            --shadow-light: #2d313c; 
+            --accent-orange: #ff761a; 
+            --lcd-bg: #14161b; 
+            --lcd-text: #ff761a; 
+        }
         
         body { 
             display: flex; 
@@ -19,24 +55,40 @@
             align-items: center; 
             min-height: 100dvh; 
             padding-top: calc(20px + env(safe-area-inset-top, 0px));
-            padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+            padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px)); /* 稍微加厚底部防護 */
             padding-left: calc(24px + env(safe-area-inset-left, 0px));
             padding-right: calc(24px + env(safe-area-inset-right, 0px));
-            overflow-y: auto; 
+            overflow-y: auto; /* 🟢 准許滾動，細屏幕用家救星 */
+            -webkit-overflow-scrolling: touch; /* 🟢 開啟 iOS 原生滾動減速慣性 */
+            transition: background-color var(--transition-speed) ease;
         }
         
-        /* 👑 升級：全域換裝高品質無襯線 Sans-Serif 字體 */
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; font-weight: 600; text-transform: uppercase; transition: all 0.3s ease; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+        * { 
+            box-sizing: border-box; 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-weight: 600; 
+            text-transform: uppercase; 
+            -webkit-user-select: none; 
+            user-select: none; 
+            -webkit-touch-callout: none; 
+        }
+
+        .layout-container, .brand-logo, .casio-field label, .version-footer {
+            transition: color var(--transition-speed) ease;
+        }
+        .pad-key, .casio-field input, .lcd-screen {
+            transition: background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease, color var(--transition-speed) ease;
+        }
 
         .layout-container { width: 100%; max-width: 440px; }
 
         /* Top Bar */
         .top-bar { display: flex; justify-content: space-between; align-items: center; height: 50px; margin-bottom: 20px; }
-        .brand-logo { font-size: 1.2rem; letter-spacing: 1.5px; color: var(--text-color) !important; }
-        .brand-logo span { font-size: 0.7rem; vertical-align: super; margin-left: 2px; }
+        .brand-logo { font-size: 1.15rem; letter-spacing: 1.5px; color: var(--text-color) !important; font-weight: 700; }
+        .brand-logo span { font-size: 0.65rem; vertical-align: super; margin-left: 2px; opacity: 0.8; }
         .top-controls { display: flex; align-items: center; height: 100%; }
         
-        /* 大氣加長版太陽能板切換器 */
+        /* 太陽能板 */
         .switch-container { 
             width: 86px; 
             height: 26px; 
@@ -63,119 +115,151 @@
         html.dark-mode .switch-thumb { transform: translateX(46px); background: linear-gradient(180deg, var(--primary-orange) 0%, #d45d00 100%); box-shadow: 0 0 6px rgba(255,111,0,0.45), inset 1px 1px 0px rgba(255,255,255,0.35); }
         html.dark-mode .switch-thumb::before { background: repeating-linear-gradient(90deg, #ffffff, #ffffff 2px, transparent 2px, transparent 4px); opacity: 0.7; }
 
-        /* LCD 面板 (iOS 大圓角與擬真點陣紋理) */
+        /* LCD 面板 */
         .lcd-screen { 
             background-color: var(--lcd-bg); 
-            background-image: radial-gradient(rgba(26, 37, 21, 0.07) 0.7px, transparent 0.7px);
+            background-image: radial-gradient(rgba(26, 37, 21, 0.06) 0.7px, transparent 0.7px);
             background-size: 2px 2px;
-            padding: 20px; 
-            border-radius: 22px; 
-            box-shadow: inset 4px 4px 8px rgba(0,0,0,0.2); 
-            margin-bottom: 20px; 
+            padding: 18px 20px; 
+            border-radius: 20px; 
+            box-shadow: inset 3px 3px 7px rgba(0,0,0,0.22); 
+            margin-bottom: 22px; 
             text-align: right; 
         }
         html.dark-mode .lcd-screen { 
-            background-color: var(--lcd-bg);
             background-image: radial-gradient(rgba(255, 118, 26, 0.04) 0.7px, transparent 0.7px);
         }
 
-        .result-title { font-size: 0.8rem; color: var(--lcd-text) !important; opacity: 0.8; margin-bottom: 4px; }
+        .result-title { font-size: 0.75rem; color: var(--lcd-text) !important; opacity: 0.75; margin-bottom: 2px; letter-spacing: 0.5px; }
         
-        /* 👑 優化：LCD 螢幕大數字保留 Casio 點陣式壓縮感字體 + 雙層加強背光 */
         .profit-value { 
-            font-family: ui-monospace, "SF Mono", Menlo, Monaco, monospace; 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
             font-variant-numeric: tabular-nums; 
-            font-size: 2.3rem; 
-            letter-spacing: -0.5px;
+            font-size: 2.5rem; 
+            letter-spacing: -0.02em;
             font-weight: 700;
             color: var(--lcd-text) !important; 
-            margin-bottom: 8px; 
-            text-shadow: 1px 1px 2px rgba(22, 32, 21, 0.35), 0 0 10px rgba(22, 32, 21, 0.2);
+            margin-bottom: 6px; 
         }
         
-        /* 👑 當切換去 Dark Mode 時，三層疊加做出 Cyber Glow 霓虹自發光質感 */
-        html.dark-mode .profit-value {
-            text-shadow: 0 0 3px rgba(255, 118, 26, 0.9),
-                         0 0 12px rgba(255, 118, 26, 0.6),
-                         0 0 25px rgba(255, 118, 26, 0.3);
-        }
+        /* LCD 底部狀態列 */
+        .lcd-fee-row { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(0,0,0,0.07); padding-top: 8px; margin-top: 4px; gap: 4px; }
+        html.dark-mode .lcd-fee-row { border-top-color: rgba(255,255,255,0.06); }
         
-        /* LCD 底部一體化狀態列 */
-        .lcd-fee-row { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 8px; margin-top: 6px; gap: 4px; }
-        .fee-label { font-size: 0.6rem; color: var(--lcd-text) !important; opacity: 0.7; display: flex; align-items: center; }
-        .info-icon { width: 14px; height: 14px; border: 1px solid var(--lcd-text); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; margin-left: 5px; cursor: pointer; opacity: 0.7; font-style: italic; }
-        .fee-item-compact { font-size: 0.6rem; color: var(--lcd-text) !important; opacity: 0.7; }
+        .fee-label { font-size: 0.65rem; color: var(--lcd-text) !important; opacity: 0.75; display: inline-flex; align-items: center; }
+        .info-icon { width: 13px; height: 13px; border: 1px solid var(--lcd-text); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; margin-left: 4px; cursor: pointer; opacity: 0.7; font-style: italic; font-weight: bold; }
+        .fee-item-compact { font-size: 0.65rem; color: var(--lcd-text) !important; opacity: 0.75; }
         
-        .lcd-sl-group { display: flex; align-items: center; gap: 4px; font-size: 0.6rem; color: var(--lcd-text) !important; opacity: 0.7; }
-        .lcd-btn { background: rgba(0, 0, 0, 0.06); border: none; color: var(--lcd-text) !important; border-radius: 4px; width: 15px; height: 15px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.65rem; cursor: pointer; font-weight: bold; padding: 0; margin: 0 1px; }
+        .lcd-sl-group { display: flex; align-items: center; gap: 4px; font-size: 0.65rem; color: var(--lcd-text) !important; opacity: 0.75; }
+        .lcd-btn { background: rgba(0, 0, 0, 0.06); border: none; color: var(--lcd-text) !important; border-radius: 4px; width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem; cursor: pointer; font-weight: 800; padding: 0; margin: 0 1px; }
         html.dark-mode .lcd-btn { background: rgba(255, 255, 255, 0.08); }
-        .lcd-btn:active { background: rgba(0, 0, 0, 0.18); }
+        .lcd-btn:active { background: rgba(0, 0, 0, 0.16); } html.dark-mode .lcd-btn:active { background: rgba(255, 255, 255, 0.2); }
 
-        /* Input Grid (iOS 大圓角) - 👑 已修復：完全移走 border 雜訊，乾淨內凹 */
-        .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-        .casio-field label { font-size: 0.7rem; color: var(--text-muted) !important; margin-bottom: 6px; text-align: center; display: block; }
-        .casio-field input { width: 100%; padding: 14px 4px; border: none; border-radius: 14px; background: var(--case-color); color: var(--text-color) !important; font-size: 1.1rem; text-align: center; outline: none; box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light); }
-        .casio-field input.focused { color: var(--primary-orange) !important; box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); outline: none; }
+        /* Input Grid */
+        .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 22px; }
+        .casio-field label { font-size: 0.7rem; color: var(--text-muted) !important; margin-bottom: 6px; text-align: center; display: block; font-weight: 700; letter-spacing: 0.5px; }
+        
+        .casio-field input { 
+            width: 100%; 
+            padding: 13px 4px; 
+            border: none; 
+            border-radius: 12px; 
+            background: var(--case-color); 
+            color: var(--text-color) !important; 
+            font-size: 1.15rem; 
+            font-weight: 700;
+            text-align: center; 
+            outline: none; 
+            box-shadow: 2.5px 2.5px 5px var(--shadow-dark), -2.5px -2.5px 5px var(--shadow-light); 
+        }
+        .casio-field input.focused { 
+            color: var(--primary-orange) !important; 
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); 
+            outline: none;
+        }
 
-        /* Pad Grid (iOS 大圓角) */
+        /* Pad Grid */
         .pad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        .pad-key { border: none; background: var(--case-color); color: var(--text-color) !important; padding: 16px 0; font-size: 1.3rem; border-radius: 14px; box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light); cursor: pointer; }
-        .pad-key:active { box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light); }
-        .pad-c { color: var(--accent-orange) !important; font-weight: 700; }
-        .pad-fn { color: var(--text-muted) !important; font-weight: 700; font-size: 1.1rem; }
+        
+        .pad-top-row { grid-column: span 3; display: flex; gap: 12px; }
+        .pad-top-row .pad-key { flex: 1; }
 
-        .version-footer { margin-top: 24px; padding: 10px; font-size: 0.55rem; color: var(--text-muted); text-align: center; opacity: 0.7; }
+        .pad-key { 
+            border: none; 
+            background: var(--case-color); 
+            color: var(--text-color) !important; 
+            padding: 15px 0; 
+            font-size: 1.25rem; 
+            font-weight: 700;
+            border-radius: 12px; 
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light); 
+            cursor: pointer; 
+        }
+        .pad-key:active { box-shadow: inset 2.5px 2.5px 5px var(--shadow-dark), inset -2.5px -2.5px 5px var(--shadow-light); }
+        
+        .pad-c { 
+            background: linear-gradient(180deg, var(--accent-orange) 0%, #d45d00 100%) !important; 
+            color: #ffffff !important; 
+            font-weight: 700; 
+            box-shadow: 3px 3px 6px var(--shadow-dark), -1.5px -1.5px 3px var(--shadow-light), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+        }
+        .pad-c:active { 
+            box-shadow: inset 2.5px 2.5px 5px rgba(0,0,0,0.35) !important; 
+            background: linear-gradient(180deg, #d45d00 0%, #b34e00 100%) !important; 
+        }
+        .pad-fn { color: var(--text-muted) !important; font-weight: 700; font-size: 1.05rem; }
 
-        /* 擬真風格 Bottom Sheet (iOS 大圓角) */
-        .sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); display: none; z-index: 99; opacity: 0; transition: opacity 0.3s ease; }
+        .version-footer { margin-top: 24px; padding: 10px; font-size: 0.55rem; color: var(--text-muted); text-align: center; opacity: 0.6; letter-spacing: 0.5px; }
+
+        /* Bottom Sheet */
+        .sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); display: none; z-index: 99; opacity: 0; transition: opacity 0.2s ease; }
         .sheet-overlay.open { display: block; opacity: 1; }
         
         .bottom-sheet { 
             position: fixed; bottom: 0; left: 0; width: 100%; 
             background: var(--case-color); 
-            border-radius: 32px 32px 0 0; 
+            border-radius: 28px 28px 0 0; 
             padding: 16px 24px 24px 24px; 
             padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); 
             transform: translateY(100%); 
-            transition: transform 0.35s cubic-bezier(0.15, 0.85, 0.2, 1); 
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.15), inset 0 1.5px 0px var(--shadow-light); 
-            border-top: 1px solid rgba(0,0,0,0.05);
-            z-index: 100; max-height: 85vh; overflow-y: auto; 
+            transition: transform 0.3s cubic-bezier(0.15, 0.85, 0.2, 1); 
+            box-shadow: 0 -8px 24px rgba(0,0,0,0.12), inset 0 1.5px 0px var(--shadow-light); 
+            border-top: 1px solid rgba(0,0,0,0.03);
+            z-index: 100; max-height: 80vh; overflow-y: auto; 
         }
         .bottom-sheet.open { transform: translateY(0); }
         
-        .sheet-handle { width: 42px; height: 5px; background: rgba(0, 0, 0, 0.12); border-radius: 3px; margin: 0 auto 22px auto; box-shadow: inset 1px 1px 2px rgba(0,0,0,0.25), 0 1px 0px var(--shadow-light); }
-        html.dark-mode .sheet-handle { background: rgba(255,255,255,0.15); box-shadow: inset 1px 1px 2px rgba(0,0,0,0.5), 0 1px 0px rgba(255,255,255,0.05); }
+        .sheet-handle { width: 40px; height: 5px; background: rgba(0, 0, 0, 0.1); border-radius: 3px; margin: 0 auto 20px auto; box-shadow: inset 1px 1px 2px rgba(0,0,0,0.15), 0 1px 0px var(--shadow-light); }
+        html.dark-mode .sheet-handle { background: rgba(255,255,255,0.15); box-shadow: inset 1px 1px 2px rgba(0,0,0,0.4), 0 1px 0px rgba(255,255,255,0.03); }
 
-        .sheet-content h3 { margin: 0 0 18px 0; color: var(--text-color); font-size: 1.1rem; text-align: center; letter-spacing: 1px; }
+        .sheet-content h3 { margin: 0 0 16px 0; color: var(--text-color); font-size: 1.05rem; text-align: center; letter-spacing: 0.5px; font-weight: 700; }
         
         .sheet-panel-debossed {
-            background: rgba(0, 0, 0, 0.02);
-            background-image: radial-gradient(rgba(0, 0, 0, 0.03) 0.6px, transparent 0.6px);
+            background: rgba(0, 0, 0, 0.015);
+            background-image: radial-gradient(rgba(0, 0, 0, 0.02) 0.6px, transparent 0.6px);
             background-size: 2px 2px;
             padding: 16px;
-            border-radius: 18px;
-            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
-            border: 1px solid rgba(0,0,0,0.03);
-            margin-bottom: 24px;
+            border-radius: 16px;
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
+            border: 1px solid rgba(0,0,0,0.02);
+            margin-bottom: 20px;
         }
         html.dark-mode .sheet-panel-debossed {
-            background: rgba(0, 0, 0, 0.18);
+            background: rgba(0, 0, 0, 0.15);
             background-image: radial-gradient(rgba(255, 255, 255, 0.01) 0.6px, transparent 0.6px);
-            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -1px -1px 2px rgba(255,255,255,0.02);
-            border-color: rgba(0,0,0,0.2);
+            box-shadow: inset 2.5px 2.5px 5px var(--shadow-dark), inset -1px -1px 2px rgba(255,255,255,0.01);
+            border-color: rgba(0,0,0,0.15);
         }
 
         .fee-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; color: var(--text-color); }
-        .fee-table th { color: var(--text-muted); padding: 8px; text-align: left; font-size: 0.65rem; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(128,128,128,0.2); }
-        .fee-table td { padding: 10px 8px; border-bottom: 1px solid rgba(128,128,128,0.12); }
+        .fee-table th { color: var(--text-muted); padding: 8px; text-align: left; font-size: 0.65rem; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(128,128,128,0.15); }
+        .fee-table td { padding: 9px 8px; border-bottom: 1px solid rgba(128,128,128,0.1); }
         .fee-table tr:last-child td { border-bottom: none; }
-        .tier-header { font-weight: bold; color: var(--primary-orange); }
-        .tier-header td { padding-top: 16px; border-bottom: 1px solid rgba(128,128,128,0.2); }
+        .tier-header { font-weight: 700; color: var(--primary-orange); }
+        .tier-header td { padding-top: 14px; border-bottom: 1px solid rgba(128,128,128,0.15); }
         
-        /* 擬真實體橙色按鍵 */
-        .close-sheet { width: 100%; padding: 15px; border-radius: 14px; border: none; background: linear-gradient(180deg, var(--accent-orange) 0%, #d45d00 100%); color: white; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 3px 3px 6px var(--shadow-dark), -2px -2px 4px var(--shadow-light), inset 0 1px 0 rgba(255,255,255,0.25); }
-        .close-sheet:active { box-shadow: inset 3px 3px 6px rgba(0,0,0,0.3), inset -1px -1px 2px rgba(255,255,255,0.1); background: linear-gradient(180deg, #d45d00 0%, #b34e00 100%); }
+        .close-sheet { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(180deg, var(--accent-orange) 0%, #d45d00 100%); color: white; font-size: 1.05rem; font-weight: bold; cursor: pointer; box-shadow: 3px 3px 6px var(--shadow-dark), -1.5px -1.5px 3px var(--shadow-light), inset 0 1px 0 rgba(255,255,255,0.2); }
+        .close-sheet:active { box-shadow: inset 2.5px 2.5px 5px rgba(0,0,0,0.35); background: linear-gradient(180deg, #d45d00 0%, #b34e00 100%); }
     </style>
 </head>
 <body>
@@ -198,43 +282,46 @@
             <div class="profit-value" id="netProfitDisplay">$0.00</div>
             
             <div class="lcd-fee-row">
-                <span class="fee-label">Fee <span class="info-icon" onclick="openSheet()">i</span></span>
+                <span class="fee-label">Fee <span class="info-icon" id="infoBtn">i</span></span>
                 <span class="fee-item-compact">Cost: <span id="buyCostDisplayLcd">$0.00</span></span>
                 
                 <div class="lcd-sl-group">
-                    <span>STOP LOSS <span id="slPercentDisplay">5.0%</span></span>
-                    <button class="lcd-btn" onclick="adjustSL(-0.5)">-</button>
-                    <button class="lcd-btn" onclick="adjustSL(0.5)">+</button>
+                    <span>SL <span id="slPercentDisplay">5%</span></span>
+                    <button class="lcd-btn" id="slMinusBtn">-</button>
+                    <button class="lcd-btn" id="slPlusBtn">+</button>
                     <span id="slPriceDisplay">$0.00</span>
                 </div>
             </div>
         </div>
         
         <div class="input-grid">
-            <div class="casio-field"><label>BUY</label><input type="text" id="buyPrice" placeholder="-" inputmode="none" readonly autocomplete="off" autocorrect="off" spellcheck="false"></div>
-            <div class="casio-field"><label>SELL</label><input type="text" id="sellPrice" placeholder="-" inputmode="none" readonly autocomplete="off" autocorrect="off" spellcheck="false"></div>
-            <div class="casio-field"><label>QTY</label><input type="text" id="shares" placeholder="-" inputmode="none" readonly autocomplete="off" autocorrect="off" spellcheck="false"></div>
+            <div class="casio-field"><label>BUY</label><input type="text" id="buyPrice" placeholder="-" inputmode="none" readonly autocomplete="off"></div>
+            <div class="casio-field"><label>SELL</label><input type="text" id="sellPrice" placeholder="-" inputmode="none" readonly autocomplete="off"></div>
+            <div class="casio-field"><label>QTY</label><input type="text" id="shares" placeholder="-" inputmode="none" readonly autocomplete="off"></div>
         </div>
 
         <div class="pad-grid">
-            <button class="pad-key pad-fn" onclick="adjustActiveField(1)">▲</button>
-            <button class="pad-key pad-fn" onclick="adjustActiveField(-1)">▼</button>
-            <button class="pad-key pad-c" id="clearBtn" onclick="handleClear()">C</button>
+            <div class="pad-top-row">
+                <button class="pad-key pad-fn" data-action="up">▲</button>
+                <button class="pad-key pad-fn" data-action="down">▼</button>
+                <button class="pad-key pad-fn" data-action="del">DEL</button>
+                <button class="pad-key pad-c" data-action="ac">AC</button>
+            </div>
             
-            <button class="pad-key" onclick="tapKey('7')">7</button><button class="pad-key" onclick="tapKey('8')">8</button><button class="pad-key" onclick="tapKey('9')">9</button>
-            <button class="pad-key" onclick="tapKey('4')">4</button><button class="pad-key" onclick="tapKey('5')">5</button><button class="pad-key" onclick="tapKey('6')">6</button>
-            <button class="pad-key" onclick="tapKey('1')">1</button><button class="pad-key" onclick="tapKey('2')">2</button><button class="pad-key" onclick="tapKey('3')">3</button>
+            <button class="pad-key" data-key="7">7</button><button class="pad-key" data-key="8">8</button><button class="pad-key" data-key="9">9</button>
+            <button class="pad-key" data-key="4">4</button><button class="pad-key" data-key="5">5</button><button class="pad-key" data-key="6">6</button>
+            <button class="pad-key" data-key="1">1</button><button class="pad-key" data-key="2">2</button><button class="pad-key" data-key="3">3</button>
             
-            <button class="pad-key" style="grid-column: span 2;" onclick="tapKey('0')">0</button>
-            <button class="pad-key" onclick="tapKey('.')">.</button>
+            <button class="pad-key" style="grid-column: span 2;" data-key="0">0</button>
+            <button class="pad-key" data-key=".">.</button>
         </div>
 
         <div class="version-footer">
-            V4.7 | SKEUOMORPHIC UI WITH MODERN SAN-SERIF
+            V5.1 | NATIVE-APPIFIED LIGHTSPEED ENGINE
         </div>
     </div>
 
-    <div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
+    <div class="sheet-overlay" id="sheetOverlay"></div>
     <div class="bottom-sheet" id="feeSheet">
         <div class="sheet-handle"></div>
         <div class="sheet-content">
@@ -243,7 +330,7 @@
                 <table class="fee-table">
                     <thead><tr><th>ITEM</th><th>DESCRIPTION</th></tr></thead>
                     <tbody>
-                        <tr style="font-weight: bold; color: var(--accent-orange); background: rgba(255,111,0,0.05);"><td>TOTAL FEE</td><td id="modalTotalFee">$0.00</td></tr>
+                        <tr style="font-weight: 700; color: var(--accent-orange); background: rgba(255,111,0,0.04);"><td>TOTAL FEE</td><td id="modalTotalFee">$0.00</td></tr>
                         <tr><td>Buy Side Fee</td><td id="modalBuyFee">$0.00</td></tr>
                         <tr><td>Sell Side Fee</td><td id="modalSellFee">$0.00</td></tr>
                         <tr class="tier-header"><td colspan="2">Standard Benchmarks Reference</td></tr>
@@ -254,29 +341,27 @@
                     </tbody>
                 </table>
             </div>
-            <button class="close-sheet" onclick="closeSheet()">CLOSE</button>
+            <button class="close-sheet" id="closeSheetBtn">CLOSE</button>
         </div>
     </div>
 
     <script>
-        let stopLossPercent = 5.0;
+        let stopLossPercent = 5;
         let currentActiveInput = null;
 
-       window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', () => {
             const buyInput = document.getElementById('buyPrice');
             buyInput.classList.add('focused');
             currentActiveInput = buyInput;
-            updateClearButton();
 
-            // 🟢 核心：禁止整個畫面的橡皮筋回彈效果（除咗 Bottom Sheet 入面需要 scroll 之外）
-            document.body.addEventListener('touchmove', function(e) {
-                // 如果用戶唔係喺展開咗嘅 Bottom Sheet 入面滾動，就完全鎖死滾動
-                if (!e.target.closest('.bottom-sheet')) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
+            // 👑 修正：移除了全域的 e.preventDefault() 攔截，回歸合理的自由滑動能力
+            // 封印長按彈出選單 / 放大鏡
+            document.addEventListener('contextmenu', e => e.preventDefault());
+
+            setupTouchEvents();
         });
 
+        // 主題切換
         document.getElementById('themeSwitch').addEventListener('click', () => {
             document.documentElement.classList.toggle('dark-mode');
             document.body.classList.toggle('dark-mode');
@@ -292,42 +377,59 @@
             document.getElementById('sheetOverlay').classList.remove('open');
         }
 
+        // 輸入框焦點切換
         ['buyPrice', 'sellPrice', 'shares'].forEach(id => {
             document.getElementById(id).addEventListener('click', (e) => {
                 document.querySelectorAll('input').forEach(i => i.classList.remove('focused'));
                 e.target.classList.add('focused');
                 currentActiveInput = e.target;
-                updateClearButton();
             });
         });
 
-        function updateClearButton() {
-            const clearBtn = document.getElementById('clearBtn');
-            if (!currentActiveInput) return;
+        // 高性能 Native 觸控引擎
+        function setupTouchEvents() {
+            const keys = document.querySelectorAll('.pad-key');
+            keys.forEach(key => {
+                const handleEvent = (e) => {
+                    e.preventDefault(); 
+                    
+                    if (window.navigator.vibrate) window.navigator.vibrate(8);
 
-            const currentVal = currentActiveInput.value;
-            const buy = document.getElementById('buyPrice').value;
-            const sell = document.getElementById('sellPrice').value;
-            const qty = document.getElementById('shares').value;
+                    const k = key.getAttribute('data-key');
+                    const action = key.getAttribute('data-action');
 
-            if (currentVal !== '') {
-                clearBtn.textContent = 'C';
-            } else if (buy !== '' || sell !== '' || qty !== '') {
-                clearBtn.textContent = 'AC';
-            } else {
-                clearBtn.textContent = 'C';
-            }
+                    if (k) tapKey(k);
+                    if (action) {
+                        if (action === 'up') adjustActiveField(1);
+                        if (action === 'down') adjustActiveField(-1);
+                        if (action === 'del') handleDel();
+                        if (action === 'ac') resetAll();
+                    }
+                };
+
+                key.addEventListener('touchstart', handleEvent, { passive: false });
+                key.addEventListener('mousedown', (e) => {
+                    if (!('ontouchstart' in window)) handleEvent(e);
+                });
+            });
+
+            const bindClickAndTouch = (el, fn) => {
+                el.addEventListener('touchstart', (e) => { e.preventDefault(); fn(); }, { passive: false });
+                el.addEventListener('click', (e) => { fn(); });
+            };
+
+            bindClickAndTouch(document.getElementById('infoBtn'), openSheet);
+            bindClickAndTouch(document.getElementById('sheetOverlay'), closeSheet);
+            bindClickAndTouch(document.getElementById('closeSheetBtn'), closeSheet);
+            bindClickAndTouch(document.getElementById('slMinusBtn'), () => adjustSL(-1));
+            bindClickAndTouch(document.getElementById('slPlusBtn'), () => adjustSL(1));
         }
 
         function tapKey(key) {
             if (!currentActiveInput) return;
             if (key === '.' && currentActiveInput.value.includes('.')) return;
-            
-            triggerHaptic(); // 🟢 接入震動元件
-            
             currentActiveInput.value += key;
             calculate();
-            updateClearButton();
         }
 
         function adjustActiveField(direction) {
@@ -345,36 +447,24 @@
             }
             
             calculate();
-            updateClearButton();
         }
 
-        function backspace() {
-            if (currentActiveInput) {
+        function handleDel() {
+            if (currentActiveInput && currentActiveInput.value !== '') {
                 currentActiveInput.value = currentActiveInput.value.slice(0, -1);
                 calculate();
-                updateClearButton();
             }
         }
 
         function resetAll() {
             ['buyPrice', 'sellPrice', 'shares'].forEach(id => document.getElementById(id).value = '');
             calculate();
-            updateClearButton();
-        }
-
-        function handleClear() {
-            const clearBtn = document.getElementById('clearBtn');
-            if (clearBtn.textContent === 'AC') {
-                resetAll();
-            } else {
-                backspace();
-            }
         }
 
         function adjustSL(val) {
-            stopLossPercent = parseFloat((stopLossPercent + val).toFixed(1));
+            stopLossPercent = parseInt(stopLossPercent + val);
             if (stopLossPercent < 0) stopLossPercent = 0;
-            document.getElementById('slPercentDisplay').textContent = stopLossPercent.toFixed(1) + '%';
+            document.getElementById('slPercentDisplay').textContent = stopLossPercent + '%';
             calculate();
         }
 
@@ -431,18 +521,15 @@
             const lcdStatus = document.getElementById('lcdStatus');
 
             if (sellPrice > 0) {
-                profitDisplay.textContent = '$' + Math.abs(netProfit).toFixed(2);
+                if (netProfit >= 0) {
+                    profitDisplay.textContent = '$' + netProfit.toFixed(2);
+                } else {
+                    profitDisplay.textContent = '-$' + Math.abs(netProfit).toFixed(2);
+                }
                 lcdStatus.textContent = (netProfit >= 0 ? 'PROFIT' : 'LOSS') + ' [' + ((netProfit / totalCost) * 100).toFixed(2) + '%]';
             } else {
                 profitDisplay.textContent = '$0.00';
                 lcdStatus.textContent = 'NET PROFIT';
-            }
-        }
-
-        // 🟢 震動反饋底層工具元件
-        function triggerHaptic() {
-            if (window.navigator.vibrate) {
-                window.navigator.vibrate(10); 
             }
         }
     </script>
