@@ -58,7 +58,8 @@
             align-items: center; 
             justify-content: center; 
             padding-top: env(safe-area-inset-top, 20px);
-            padding-bottom: env(safe-area-inset-bottom, 20px);
+            /* 👑 修正：強制塞入 12px 固定安全間距，並同 iOS 底部黑橫條(Home Indicator)完美疊加 */
+            padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
             padding-left: calc(20px + env(safe-area-inset-left, 0px));
             padding-right: calc(20px + env(safe-area-inset-right, 0px));
             transition: background-color var(--transition-speed) ease;
@@ -71,16 +72,16 @@
             text-transform: uppercase; 
         }
 
-        /* 核心自適應容器 - 移除 footer 後，間距更寬敞 */
+        /* 核心自適應容器 */
         .layout-container { 
             width: 100%; 
             max-width: 420px; 
             height: 100%;
-            max-height: 760px; 
+            max-height: 750px; 
             display: flex;
             flex-direction: column;
             justify-content: space-between; 
-            gap: 2.2vh; 
+            gap: 2vh; 
             transition: color var(--transition-speed) ease;
         }
 
@@ -114,12 +115,12 @@
         html.dark-mode .switch-thumb { transform: translateX(46px); background: linear-gradient(180deg, var(--primary-orange) 0%, #d45d00 100%); box-shadow: 0 0 6px rgba(255,111,0,0.45), inset 1px 1px 0px rgba(255,255,255,0.35); }
         html.dark-mode .switch-thumb::before { background: repeating-linear-gradient(90deg, #ffffff, #ffffff 2px, transparent 2px, transparent 4px); opacity: 0.7; }
 
-        /* 👑 LCD 面板：精細重組佈局 */
+        /* LCD 面板 */
         .lcd-screen { 
             background-color: var(--lcd-bg); 
             background-image: radial-gradient(rgba(26, 37, 21, 0.06) 0.7px, transparent 0.7px);
             background-size: 2px 2px;
-            padding: 0; /* 清空全域 padding，改由內部區塊各自控製 */
+            padding: 0; 
             border-radius: 20px; 
             box-shadow: inset 3px 3px 7px rgba(0,0,0,0.22); 
             text-align: right; 
@@ -127,7 +128,7 @@
             flex-shrink: 1; 
             display: flex;
             flex-direction: column;
-            min-height: 125px; /* 稍微提升基礎高度，確保更有大氣計算機質感 */
+            min-height: 120px;
             overflow: hidden;
             transition: background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
         }
@@ -135,7 +136,7 @@
             background-image: radial-gradient(rgba(255, 118, 26, 0.04) 0.7px, transparent 0.7px);
         }
 
-        /* 👑 數字核心容器：強制絕對垂直居中 */
+        /* 數字核心容器：強制絕對垂直置中 */
         .lcd-main-display {
             flex-grow: 1;
             display: flex;
@@ -154,13 +155,13 @@
             line-height: 1.05;
         }
         
-        /* 👑 LCD 底部狀態列：加厚上下 padding，永遠貼緊底部 */
+        /* LCD 底部狀態列：加厚 Padding 貼底 */
         .lcd-fee-row { 
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
             border-top: 1px solid rgba(0,0,0,0.08); 
-            padding: 12px 20px; /* 🟢 增加上下 Padding，實現完美的隔離感 */
+            padding: 12px 20px; 
             gap: 4px; 
             flex-shrink: 0;
             background: rgba(0,0,0,0.01);
@@ -205,7 +206,7 @@
             border: none; 
             background: var(--case-color); 
             color: var(--text-color) !important; 
-            padding: clamp(13px, 2vh, 19px) 0; 
+            padding: clamp(12px, 1.9vh, 18px) 0; 
             font-size: 1.22rem; 
             font-weight: 700;
             border-radius: 11px; 
@@ -221,7 +222,7 @@
         .pad-c:active { background: linear-gradient(180deg, #d45d00 0%, #b34e00 100%) !important; }
         .pad-fn { color: var(--text-muted) !important; font-weight: 700; font-size: 1rem; }
 
-        /* Bottom Sheet 佈局 */
+        /* Bottom Sheet */
         .sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); display: none; z-index: 99; opacity: 0; transition: opacity 0.2s ease; }
         .sheet-overlay.open { display: block; opacity: 1; }
         
@@ -257,7 +258,6 @@
         .tier-header td { padding-top: 14px; border-bottom: 1px solid rgba(128,128,128,0.15); }
         .close-sheet { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(180deg, var(--accent-orange) 0%, #d45d00 100%); color: white; font-size: 1.05rem; font-weight: bold; cursor: pointer; box-shadow: 3px 3px 6px var(--shadow-dark); }
 
-        /* 👑 移到此處的 Version Footer */
         .version-footer-sheet { 
             margin-top: 16px; 
             font-size: 0.58rem; 
@@ -346,9 +346,8 @@
                 </table>
             </div>
             <button class="close-sheet" id="closeSheetBtn">CLOSE</button>
-            
             <div class="version-footer-sheet">
-                V5.3 | AUTOMATIC FLUID 100DVH ENGINE (COMPACTED)
+                V5.4 | AUTOMATIC FLUID 100DVH ENGINE (MARGIN-FIXED)
             </div>
         </div>
     </div>
@@ -362,7 +361,6 @@
             buyInput.classList.add('focused');
             currentActiveInput = buyInput;
 
-            // 鎖死橡皮筋手勢
             document.body.addEventListener('touchmove', function(e) {
                 if (!e.target.closest('.bottom-sheet')) {
                     e.preventDefault();
