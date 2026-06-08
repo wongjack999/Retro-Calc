@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#e3e7ee">
     
-    <title>CALC Stock-26</title>
+    <title>CALC Stock-26 V6.1</title>
     <style>
         /* 終極鎖死全域佈局 */
         html, body { 
@@ -25,34 +25,36 @@
             overflow: hidden; 
         }
         
-        /* 核心色彩與佈局變數 */
+        /* 核心色調 */
         :root { 
-            --bg-color: #e3e7ee; 
-            --case-color: #e8ecf3; 
+            --bg-color: #e6ebf4; 
+            --case-color: #ecf0f8; 
             --primary-orange: #ff6f00; 
             --text-color: #1e2530; 
             --text-muted: #626e82; 
-            --shadow-dark: #b8c2d1; 
+            --shadow-dark: #b3bdcc; 
             --shadow-light: #ffffff; 
             --accent-orange: #ff6f00; 
-            --lcd-bg: #a3b899; 
-            --lcd-text: #162012; 
-            --transition-speed: 0.25s;
-            
-            /* 👑 稍微精簡間距，確保在 Safari 包圍下不會擠爆 */
+            --lcd-bg: #a6be9c; 
+            --lcd-text: #12190e; 
+            --transition-speed: 0.2s;
             --main-gap: 2.2vh; 
+            --border-highlight: rgba(255, 255, 255, 0.9);
+            --border-lowlight: rgba(0, 0, 0, 0.04);
         }
         html.dark-mode { 
-            --bg-color: #1a1c20; 
-            --case-color: #22252d; 
+            --bg-color: #16181c; 
+            --case-color: #20242c; 
             --primary-orange: #ff761a; 
             --text-color: #f1f5f9; 
             --text-muted: #8e9cae; 
-            --shadow-dark: #111317; 
-            --shadow-light: #2d313c; 
+            --shadow-dark: #0f1114; 
+            --shadow-light: #2b303b; 
             --accent-orange: #ff761a; 
-            --lcd-bg: #14161b; 
+            --lcd-bg: #121418; 
             --lcd-text: #ff761a; 
+            --border-highlight: rgba(255, 255, 255, 0.08);
+            --border-lowlight: rgba(0, 0, 0, 0.2);
         }
         
         body { 
@@ -61,8 +63,6 @@
             align-items: center; 
             justify-content: center; 
             box-sizing: border-box;
-            
-            /* 👑 修復：全面加大安全防線，徹底隔開 Dynamic Island 同最底 Safari 條 Bar */
             padding-top: calc(var(--main-gap) + max(20px, env(safe-area-inset-top, 0px)));
             padding-bottom: calc(var(--main-gap) + max(28px, env(safe-area-inset-bottom, 0px)));
             padding-left: calc(20px + env(safe-area-inset-left, 0px));
@@ -77,23 +77,22 @@
             text-transform: uppercase; 
         }
 
-        /* 👑 核心自適應容器 - 解除死硬的 height: 100%，改用安全彈性收縮 */
+        /* 核心自適應容器 */
         .layout-container { 
             width: 100%; 
             max-width: 420px; 
             flex: 1;
-            min-height: 0; /* 🟢 關鍵：阻止內部元件向外頂爆 */
+            min-height: 0; 
             max-height: 740px; 
             display: flex;
             flex-direction: column;
             justify-content: space-between; 
             gap: var(--main-gap); 
-            transition: color var(--transition-speed) ease;
         }
 
         /* Top Bar */
         .top-bar { display: flex; justify-content: space-between; align-items: center; height: 36px; flex-shrink: 0; }
-        .brand-logo { font-size: 1.1rem; letter-spacing: 1.5px; color: var(--text-color) !important; font-weight: 700; }
+        .brand-logo { font-size: 1.1rem; letter-spacing: 1.5px; color: var(--text-color) !important; font-weight: 700; text-shadow: 0.5px 0.5px 0px var(--shadow-light); }
         .brand-logo span { font-size: 0.65rem; vertical-align: super; margin-left: 2px; opacity: 0.8; }
         .top-controls { display: flex; align-items: center; height: 100%; }
         
@@ -124,13 +123,16 @@
         /* LCD 面板 */
         .lcd-screen { 
             background-color: var(--lcd-bg); 
-            background-image: radial-gradient(rgba(26, 37, 21, 0.06) 0.7px, transparent 0.7px);
+            background-image: radial-gradient(rgba(26, 37, 21, 0.05) 0.6px, transparent 0.6px);
             background-size: 2px 2px;
             padding: 0; 
-            border-radius: 20px; 
-            box-shadow: inset 3px 3px 7px rgba(0,0,0,0.22); 
+            border-radius: 22px; 
+            box-shadow: inset 4px 4px 9px rgba(0,0,0,0.3), 
+                        inset -1px -1px 3px rgba(255,255,255,0.25),
+                        0.5px 1.5px 0px var(--shadow-light); 
+            border: 1px solid var(--border-lowlight);
             text-align: right; 
-            flex-grow: 1.2; /* 🟢 提高比重，令其在有限空間內更具自適應優勢 */
+            flex-grow: 1.2; 
             flex-shrink: 1; 
             display: flex;
             flex-direction: column;
@@ -139,10 +141,13 @@
             transition: background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
         }
         html.dark-mode .lcd-screen { 
-            background-image: radial-gradient(rgba(255, 118, 26, 0.04) 0.7px, transparent 0.7px);
+            background-image: radial-gradient(rgba(255, 118, 26, 0.03) 0.6px, transparent 0.6px);
+            box-shadow: inset 4px 4px 10px rgba(0,0,0,0.65), 
+                        inset -1px -1px 2px rgba(255,255,255,0.05),
+                        0.5px 1px 0px var(--shadow-light);
         }
 
-        /* 數字核心容器：絕對垂直居中 */
+        /* 數字核心容器 */
         .lcd-main-display {
             flex-grow: 1;
             display: flex;
@@ -150,7 +155,8 @@
             justify-content: center;
             padding: 8px 20px 0 20px;
         }
-        .result-title { font-size: 0.72rem; color: var(--lcd-text) !important; opacity: 0.75; margin-bottom: 2px; letter-spacing: 0.5px; }
+        .result-title { font-size: 0.72rem; color: var(--lcd-text) !important; opacity: 0.65; margin-bottom: 2px; letter-spacing: 0.5px; }
+        
         .profit-value { 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
             font-variant-numeric: tabular-nums; 
@@ -166,81 +172,132 @@
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
-            border-top: 1px solid rgba(0,0,0,0.08); 
+            border-top: 1px solid rgba(0,0,0,0.07); 
             padding: 12px 20px; 
             gap: 4px; 
             flex-shrink: 0;
-            background: rgba(0,0,0,0.01);
+            background: rgba(0,0,0,0.02);
         }
-        html.dark-mode .lcd-fee-row { border-top-color: rgba(255,255,255,0.06); background: rgba(0,0,0,0.05); }
+        html.dark-mode .lcd-fee-row { border-top-color: rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); }
         
-        .fee-label { font-size: 0.65rem; color: var(--lcd-text) !important; opacity: 0.75; display: inline-flex; align-items: center; }
-        .info-icon { width: 13px; height: 13px; border: 1px solid var(--lcd-text); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; margin-left: 4px; cursor: pointer; opacity: 0.7; font-style: italic; font-weight: bold; }
-        .fee-item-compact { font-size: 0.65rem; color: var(--lcd-text) !important; opacity: 0.75; }
+        .fee-label { font-size: 0.65rem; color: var(--lcd-text) !important; opacity: 0.65; display: inline-flex; align-items: center; }
+        .info-icon { width: 13px; height: 13px; border: 1px solid var(--lcd-text); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; margin-left: 4px; cursor: pointer; opacity: 0.6; font-style: italic; font-weight: bold; }
+        .fee-item-compact { font-size: 0.65rem; color: var(--lcd-text) !important; opacity: 0.65; }
         
-        .lcd-sl-group { display: flex; align-items: center; gap: 4px; font-size: 0.65rem; color: var(--lcd-text) !important; opacity: 0.75; }
-        .lcd-btn { background: rgba(0, 0, 0, 0.06); border: none; color: var(--lcd-text) !important; border-radius: 4px; width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem; cursor: pointer; font-weight: 800; padding: 0; margin: 0 1px; }
+        .lcd-sl-group { display: flex; align-items: center; gap: 4px; font-size: 0.65rem; color: var(--lcd-text) !important; opacity: 0.65; }
+        .lcd-btn { background: rgba(0, 0, 0, 0.07); border: none; color: var(--lcd-text) !important; border-radius: 4px; width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem; cursor: pointer; font-weight: 800; padding: 0; margin: 0 1px; }
         html.dark-mode .lcd-btn { background: rgba(255, 255, 255, 0.08); }
 
         /* Input Grid */
-        .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex-shrink: 0; }
+        .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; flex-shrink: 0; }
         .casio-field label { font-size: 0.68rem; color: var(--text-muted) !important; margin-bottom: 5px; text-align: center; display: block; font-weight: 700; letter-spacing: 0.5px; }
+        
+        /* 👑 修正：還原輸入框平時「凸」起的軟擬物狀態，徹底拔除橙邊 */
         .casio-field input { 
             width: 100%; 
-            padding: 11px 4px; 
-            border: none; 
-            border-radius: 11px; 
+            padding: 12px 4px; 
+            border: 1px solid transparent; /* 拔除所有顏色邊框線 */
+            border-radius: 12px; 
             background: var(--case-color); 
             color: var(--text-color) !important; 
             font-size: 1.15rem; 
             font-weight: 700;
             text-align: center; 
             outline: none; 
-            box-shadow: 2px 2px 4.5px var(--shadow-dark), -2px -2px 4.5px var(--shadow-light); 
+            
+            /* 平時保持漂亮立體的「凸」起狀態 */
+            box-shadow: 
+                inset 1px 1px 0px var(--border-highlight),
+                2.5px 2.5px 5px var(--shadow-dark), 
+                -2.5px -2.5px 5px var(--shadow-light); 
+                
+            transition: box-shadow 0.15s ease, color 0.15s ease;
         }
+        
+        /* 👑 修正：當選取（Focused）時，順暢切換成純淨的「凹」陷狀態，無任何橙色發光 */
         .casio-field input.focused { 
-            color: var(--primary-orange) !important; 
-            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); 
+            color: var(--text-color) !important; /* 保持本色，拒絕突兀橙色字 */
+            border-color: transparent;           /* 拒絕橙色邊 */
+            
+            /* 變成乾淨、深邃的「內凹」狀態 */
+            box-shadow: 
+                inset 2.5px 2.5px 5px var(--shadow-dark), 
+                inset -2.5px -2.5px 5px var(--shadow-light),
+                0.5px 1px 0px var(--shadow-light); 
         }
 
         /* Pad Grid */
-        .pad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex-shrink: 0; }
-        .pad-top-row { grid-column: span 3; display: flex; gap: 10px; }
+        .pad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; flex-shrink: 0; }
+        .pad-top-row { grid-column: span 3; display: flex; gap: 11px; }
         .pad-top-row .pad-key { flex: 1; }
 
+        /* 物理下沉按鍵 */
         .pad-key { 
-            border: none; 
-            background: var(--case-color); 
+            border: 1px solid var(--border-lowlight); 
+            background: linear-gradient(135deg, var(--case-color) 0%, rgba(0,0,0,0.01) 100%), var(--case-color); 
             color: var(--text-color) !important; 
-            padding: clamp(11px, 1.6vh, 17px) 0; /* 👑 微調按鍵內襯，騰出安全感給底部對稱 */
-            font-size: 1.22rem; 
+            padding: clamp(12px, 1.8vh, 18px) 0; 
+            font-size: 1.25rem; 
             font-weight: 700;
-            border-radius: 11px; 
-            box-shadow: 2.5px 2.5px 5px var(--shadow-dark), -2.5px -2.5px 5px var(--shadow-light); 
+            border-radius: 12px; 
             cursor: pointer; 
+            position: relative;
+            box-shadow: 
+                inset 1px 1px 0px var(--border-highlight),
+                3px 3px 6px var(--shadow-dark), 
+                -3px -3px 6px var(--shadow-light); 
+            transition: transform 0.08s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.08s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        .pad-key:active { box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); }
+        .pad-key:active { 
+            transform: translateY(1.5px);
+            box-shadow: 
+                inset 1px 1px 1px var(--border-lowlight),
+                1px 1.5px 3px var(--shadow-dark), 
+                -1px -1px 3px var(--shadow-light); 
+        }
+        
+        .pad-fn { 
+            background: linear-gradient(135deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.06) 100%), var(--case-color);
+            color: var(--text-muted) !important; 
+            font-weight: 700; 
+            font-size: 1.05rem; 
+        }
+        html.dark-mode .pad-fn {
+            background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.05) 100%), var(--case-color);
+        }
+
+        /* AC 按鍵 */
         .pad-c { 
-            background: linear-gradient(180deg, var(--accent-orange) 0%, #d45d00 100%) !important; 
+            background: linear-gradient(135deg, var(--accent-orange) 0%, #e66400 100%) !important; 
             color: #ffffff !important; 
-            box-shadow: 2.5px 2.5px 5px var(--shadow-dark), -1.5px -1.5px 3px var(--shadow-light), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+            border-color: rgba(0, 0, 0, 0.15);
+            box-shadow: 
+                inset 1px 1px 0px rgba(255,255,255,0.3),
+                3px 3px 6px var(--shadow-dark), 
+                -2px -2px 5px var(--shadow-light) !important;
         }
-        .pad-c:active { background: linear-gradient(180deg, #d45d00 0%, #b34e00 100%) !important; }
-        .pad-fn { color: var(--text-muted) !important; font-weight: 700; font-size: 1rem; }
+        .pad-c:active { 
+            background: linear-gradient(135deg, #e66400 0%, #cc5900 100%) !important; 
+            box-shadow: 
+                inset 1px 1px 1px rgba(0,0,0,0.2),
+                1px 1.5px 3px var(--shadow-dark), 
+                -1px -1px 3px var(--shadow-light) !important;
+        }
 
         /* Bottom Sheet 佈局 */
-        .sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); display: none; z-index: 99; opacity: 0; transition: opacity 0.2s ease; }
+        .sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); display: none; z-index: 99; opacity: 0; transition: opacity 0.2s ease; }
         .sheet-overlay.open { display: block; opacity: 1; }
         
         .bottom-sheet { 
             position: fixed; bottom: 0; left: 0; width: 100%; 
             background: var(--case-color); 
-            border-radius: 28px 28px 0 0; 
+            border-radius: 30px 30px 0 0; 
             padding: 16px 24px 20px 24px; 
             padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); 
             transform: translateY(100%); 
             transition: transform 0.3s cubic-bezier(0.15, 0.85, 0.2, 1); 
-            box-shadow: 0 -8px 24px rgba(0,0,0,0.12), inset 0 1.5px 0px var(--shadow-light); 
+            box-shadow: 0 -8px 30px rgba(0,0,0,0.15), inset 0 1px 0px var(--shadow-light); 
+            border: 1px solid var(--border-lowlight);
             z-index: 100; max-height: 80vh; overflow-y: auto; 
             touch-action: pan-y; 
         }
@@ -252,8 +309,9 @@
         .sheet-panel-debossed {
             background: rgba(0, 0, 0, 0.015);
             padding: 14px; border-radius: 16px;
-            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
             margin-bottom: 16px;
+            border: 1px solid var(--border-lowlight);
         }
         html.dark-mode .sheet-panel-debossed { background: rgba(0, 0, 0, 0.15); box-shadow: inset 2.5px 2.5px 5px var(--shadow-dark); }
         .fee-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; color: var(--text-color); }
@@ -262,7 +320,15 @@
         .fee-table tr:last-child td { border-bottom: none; }
         .tier-header { font-weight: 700; color: var(--primary-orange); }
         .tier-header td { padding-top: 14px; border-bottom: 1px solid rgba(128,128,128,0.15); }
-        .close-sheet { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(180deg, var(--accent-orange) 0%, #d45d00 100%); color: white; font-size: 1.05rem; font-weight: bold; cursor: pointer; box-shadow: 3px 3px 6px var(--shadow-dark); }
+        
+        .close-sheet { 
+            width: 100%; padding: 14px; border-radius: 12px; border: none; 
+            background: linear-gradient(180deg, var(--accent-orange) 0%, #d45d00 100%); 
+            color: white; font-size: 1.05rem; font-weight: bold; cursor: pointer; 
+            box-shadow: 0 4px 10px rgba(255,111,0,0.25); 
+            transition: all 0.1s ease;
+        }
+        .close-sheet:active { transform: translateY(1px); box-shadow: 0 2px 5px rgba(255,111,0,0.25); }
 
         .version-footer-sheet { 
             margin-top: 16px; 
@@ -354,7 +420,7 @@
             <button class="close-sheet" id="closeSheetBtn">CLOSE</button>
             
             <div class="version-footer-sheet">
-                V5.5 | SAFARI BOUNDARY SHIELD
+                V6.1 | PURE FOCUS DEBOSSED ENGINE
             </div>
         </div>
     </div>
@@ -388,7 +454,7 @@
             document.getElementById('sheetOverlay').classList.add('open');
         }
 
-        function closeSheet() {
+        function cancelOrCloseSheet() {
             document.getElementById('feeSheet').classList.remove('open');
             document.getElementById('sheetOverlay').classList.remove('open');
         }
@@ -431,8 +497,8 @@
             };
 
             bindClickAndTouch(document.getElementById('infoBtn'), openSheet);
-            bindClickAndTouch(document.getElementById('sheetOverlay'), closeSheet);
-            bindClickAndTouch(document.getElementById('closeSheetBtn'), closeSheet);
+            bindClickAndTouch(document.getElementById('sheetOverlay'), cancelOrCloseSheet);
+            bindClickAndTouch(document.getElementById('closeSheetBtn'), cancelOrCloseSheet);
             bindClickAndTouch(document.getElementById('slMinusBtn'), () => adjustSL(-1));
             bindClickAndTouch(document.getElementById('slPlusBtn'), () => adjustSL(1));
         }
