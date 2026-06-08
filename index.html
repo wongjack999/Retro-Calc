@@ -7,9 +7,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#e3e7ee">
     
-    <title>CALC Stock-26 V6.1</title>
+    <title>CALC Stock-26 V6.2</title>
     <style>
-        /* 終極鎖死全域佈局 */
+        /* 全域佈局鎖死 */
         html, body { 
             margin: 0; 
             padding: 0; 
@@ -25,7 +25,6 @@
             overflow: hidden; 
         }
         
-        /* 核心色調 */
         :root { 
             --bg-color: #e6ebf4; 
             --case-color: #ecf0f8; 
@@ -41,6 +40,9 @@
             --main-gap: 2.2vh; 
             --border-highlight: rgba(255, 255, 255, 0.9);
             --border-lowlight: rgba(0, 0, 0, 0.04);
+            
+            /* 👑 新增：專屬 Placeholder 殘影顏色 */
+            --placeholder-color: rgba(30, 37, 48, 0.18); 
         }
         html.dark-mode { 
             --bg-color: #16181c; 
@@ -55,6 +57,9 @@
             --lcd-text: #ff761a; 
             --border-highlight: rgba(255, 255, 255, 0.08);
             --border-lowlight: rgba(0, 0, 0, 0.2);
+            
+            /* 暗黑模式殘影 */
+            --placeholder-color: rgba(241, 245, 249, 0.12);
         }
         
         body { 
@@ -77,7 +82,6 @@
             text-transform: uppercase; 
         }
 
-        /* 核心自適應容器 */
         .layout-container { 
             width: 100%; 
             max-width: 420px; 
@@ -147,7 +151,6 @@
                         0.5px 1px 0px var(--shadow-light);
         }
 
-        /* 數字核心容器 */
         .lcd-main-display {
             flex-grow: 1;
             display: flex;
@@ -192,11 +195,11 @@
         .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; flex-shrink: 0; }
         .casio-field label { font-size: 0.68rem; color: var(--text-muted) !important; margin-bottom: 5px; text-align: center; display: block; font-weight: 700; letter-spacing: 0.5px; }
         
-        /* 👑 修正：還原輸入框平時「凸」起的軟擬物狀態，徹底拔除橙邊 */
+        /* 輸入框主體 */
         .casio-field input { 
             width: 100%; 
             padding: 12px 4px; 
-            border: 1px solid transparent; /* 拔除所有顏色邊框線 */
+            border: 1px solid transparent; 
             border-radius: 12px; 
             background: var(--case-color); 
             color: var(--text-color) !important; 
@@ -214,16 +217,26 @@
             transition: box-shadow 0.15s ease, color 0.15s ease;
         }
         
-        /* 👑 修正：當選取（Focused）時，順暢切換成純淨的「凹」陷狀態，無任何橙色發光 */
+        /* 👑 修正 Placeholder：將原本的橫線換成「硬件液晶殘影色」 */
+        .casio-field input::placeholder {
+            color: var(--placeholder-color);
+            opacity: 1; /* 鎖死 iOS 預設透明度 */
+            font-weight: 600;
+        }
+        
+        /* 當選取（Focused）時，切換成純淨的「凹」陷狀態 */
         .casio-field input.focused { 
-            color: var(--text-color) !important; /* 保持本色，拒絕突兀橙色字 */
-            border-color: transparent;           /* 拒絕橙色邊 */
-            
-            /* 變成乾淨、深邃的「內凹」狀態 */
+            color: var(--text-color) !important; 
+            border-color: transparent;           
             box-shadow: 
                 inset 2.5px 2.5px 5px var(--shadow-dark), 
                 inset -2.5px -2.5px 5px var(--shadow-light),
                 0.5px 1px 0px var(--shadow-light); 
+        }
+        
+        /* 👑 當選取時，直接將 Placeholder 隱藏（完全乾淨，方便輸入） */
+        .casio-field input.focused::placeholder {
+            color: transparent;
         }
 
         /* Pad Grid */
@@ -231,7 +244,7 @@
         .pad-top-row { grid-column: span 3; display: flex; gap: 11px; }
         .pad-top-row .pad-key { flex: 1; }
 
-        /* 物理下沉按鍵 */
+        /* 按鍵物理下沉 */
         .pad-key { 
             border: 1px solid var(--border-lowlight); 
             background: linear-gradient(135deg, var(--case-color) 0%, rgba(0,0,0,0.01) 100%), var(--case-color); 
@@ -284,7 +297,7 @@
                 -1px -1px 3px var(--shadow-light) !important;
         }
 
-        /* Bottom Sheet 佈局 */
+        /* Bottom Sheet */
         .sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); display: none; z-index: 99; opacity: 0; transition: opacity 0.2s ease; }
         .sheet-overlay.open { display: block; opacity: 1; }
         
@@ -375,9 +388,9 @@
         </div>
         
         <div class="input-grid">
-            <div class="casio-field"><label>BUY</label><input type="text" id="buyPrice" placeholder="-" inputmode="none" readonly autocomplete="off"></div>
-            <div class="casio-field"><label>SELL</label><input type="text" id="sellPrice" placeholder="-" inputmode="none" readonly autocomplete="off"></div>
-            <div class="casio-field"><label>QTY</label><input type="text" id="shares" placeholder="-" inputmode="none" readonly autocomplete="off"></div>
+            <div class="casio-field"><label>BUY</label><input type="text" id="buyPrice" placeholder="$ 0.00" inputmode="none" readonly autocomplete="off"></div>
+            <div class="casio-field"><label>SELL</label><input type="text" id="sellPrice" placeholder="$ 0.00" inputmode="none" readonly autocomplete="off"></div>
+            <div class="casio-field"><label>QTY</label><input type="text" id="shares" placeholder="0" inputmode="none" readonly autocomplete="off"></div>
         </div>
 
         <div class="pad-grid">
@@ -420,7 +433,7 @@
             <button class="close-sheet" id="closeSheetBtn">CLOSE</button>
             
             <div class="version-footer-sheet">
-                V6.1 | PURE FOCUS DEBOSSED ENGINE
+                V6.2 | HARDWARE LIQUID SHADOW ENGINE
             </div>
         </div>
     </div>
