@@ -262,11 +262,19 @@
         let stopLossPercent = 5.0;
         let currentActiveInput = null;
 
-        window.addEventListener('DOMContentLoaded', () => {
+       window.addEventListener('DOMContentLoaded', () => {
             const buyInput = document.getElementById('buyPrice');
             buyInput.classList.add('focused');
             currentActiveInput = buyInput;
             updateClearButton();
+
+            // 🟢 核心：禁止整個畫面的橡皮筋回彈效果（除咗 Bottom Sheet 入面需要 scroll 之外）
+            document.body.addEventListener('touchmove', function(e) {
+                // 如果用戶唔係喺展開咗嘅 Bottom Sheet 入面滾動，就完全鎖死滾動
+                if (!e.target.closest('.bottom-sheet')) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
         });
 
         document.getElementById('themeSwitch').addEventListener('click', () => {
