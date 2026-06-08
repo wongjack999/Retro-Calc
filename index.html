@@ -370,6 +370,9 @@
         function tapKey(key) {
             if (!currentActiveInput) return;
             if (key === '.' && currentActiveInput.value.includes('.')) return;
+
+            triggerHaptic(); // 🟢 加上呢行，等佢一撳數字就震
+            
             currentActiveInput.value += key;
             calculate();
         }
@@ -475,6 +478,22 @@
                 lcdStatus.textContent = 'NET PROFIT';
             }
         }
+
+        } else {
+                profitDisplay.textContent = '$0.00';
+                lcdStatus.textContent = 'NET PROFIT';
+            }
+        }
+
+        // 🟢 喺呢度貼上新功能，一定要喺 </script> 之前
+        function triggerHaptic() {
+            if (window.navigator.vibrate) {
+                window.navigator.vibrate(10); 
+            }
+        }
+    </script>
+</body>
+</html>
     </script>
 </body>
 </html>
