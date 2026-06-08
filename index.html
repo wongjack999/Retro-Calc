@@ -39,8 +39,8 @@
             --lcd-text: #162012; 
             --transition-speed: 0.25s;
             
-            /* 👑 統一間距變數，確保上下左右全局完美對稱 */
-            --main-gap: 2.5vh; 
+            /* 👑 稍微精簡間距，確保在 Safari 包圍下不會擠爆 */
+            --main-gap: 2.2vh; 
         }
         html.dark-mode { 
             --bg-color: #1a1c20; 
@@ -60,32 +60,34 @@
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
+            box-sizing: border-box;
             
-            /* 👑 修正：頂部與底部 Padding 精準預留對稱間距，並向外疊加 iOS 安全區 */
-            padding-top: calc(var(--main-gap) + env(safe-area-inset-top, 0px));
-            padding-bottom: calc(var(--main-gap) + env(safe-area-inset-bottom, 0px));
+            /* 👑 修復：全面加大安全防線，徹底隔開 Dynamic Island 同最底 Safari 條 Bar */
+            padding-top: calc(var(--main-gap) + max(20px, env(safe-area-inset-top, 0px)));
+            padding-bottom: calc(var(--main-gap) + max(28px, env(safe-area-inset-bottom, 0px)));
             padding-left: calc(20px + env(safe-area-inset-left, 0px));
             padding-right: calc(20px + env(safe-area-inset-right, 0px));
             transition: background-color var(--transition-speed) ease;
         }
         
         * { 
-            box-box-sizing: border-box; 
+            box-sizing: border-box; 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-weight: 600; 
             text-transform: uppercase; 
         }
 
-        /* 核心自適應容器 */
+        /* 👑 核心自適應容器 - 解除死硬的 height: 100%，改用安全彈性收縮 */
         .layout-container { 
             width: 100%; 
             max-width: 420px; 
-            height: 100%;
-            max-height: 750px; 
+            flex: 1;
+            min-height: 0; /* 🟢 關鍵：阻止內部元件向外頂爆 */
+            max-height: 740px; 
             display: flex;
             flex-direction: column;
             justify-content: space-between; 
-            gap: var(--main-gap); /* 👑 內部組件間距全部向此看齊 */
+            gap: var(--main-gap); 
             transition: color var(--transition-speed) ease;
         }
 
@@ -128,7 +130,7 @@
             border-radius: 20px; 
             box-shadow: inset 3px 3px 7px rgba(0,0,0,0.22); 
             text-align: right; 
-            flex-grow: 1; 
+            flex-grow: 1.2; /* 🟢 提高比重，令其在有限空間內更具自適應優勢 */
             flex-shrink: 1; 
             display: flex;
             flex-direction: column;
@@ -146,7 +148,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 10px 20px 0 20px;
+            padding: 8px 20px 0 20px;
         }
         .result-title { font-size: 0.72rem; color: var(--lcd-text) !important; opacity: 0.75; margin-bottom: 2px; letter-spacing: 0.5px; }
         .profit-value { 
@@ -159,7 +161,7 @@
             line-height: 1.05;
         }
         
-        /* LCD 底部狀態列：加厚貼底 */
+        /* LCD 底部狀態列 */
         .lcd-fee-row { 
             display: flex; 
             align-items: center; 
@@ -210,7 +212,7 @@
             border: none; 
             background: var(--case-color); 
             color: var(--text-color) !important; 
-            padding: clamp(12px, 1.8vh, 18px) 0; 
+            padding: clamp(11px, 1.6vh, 17px) 0; /* 👑 微調按鍵內襯，騰出安全感給底部對稱 */
             font-size: 1.22rem; 
             font-weight: 700;
             border-radius: 11px; 
@@ -262,7 +264,6 @@
         .tier-header td { padding-top: 14px; border-bottom: 1px solid rgba(128,128,128,0.15); }
         .close-sheet { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(180deg, var(--accent-orange) 0%, #d45d00 100%); color: white; font-size: 1.05rem; font-weight: bold; cursor: pointer; box-shadow: 3px 3px 6px var(--shadow-dark); }
 
-        /* 收納在此處嘅 Version Footer */
         .version-footer-sheet { 
             margin-top: 16px; 
             font-size: 0.58rem; 
@@ -353,7 +354,7 @@
             <button class="close-sheet" id="closeSheetBtn">CLOSE</button>
             
             <div class="version-footer-sheet">
-                V5.4 | PERFECT GAP SYMMETRY ENGINE
+                V5.5 | SAFARI BOUNDARY SHIELD
             </div>
         </div>
     </div>
@@ -367,7 +368,6 @@
             buyInput.classList.add('focused');
             currentActiveInput = buyInput;
 
-            // 鎖死手勢防彈跳
             document.body.addEventListener('touchmove', function(e) {
                 if (!e.target.closest('.bottom-sheet')) {
                     e.preventDefault();
