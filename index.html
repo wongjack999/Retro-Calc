@@ -163,8 +163,12 @@
         }
         .casio-field input.focused { 
             color: var(--primary-orange) !important; 
-            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light); 
-            border-color: rgba(255,111,0,0.25);
+            /* 保持原本嘅內凹陰影，但在最後用逗號疊加一層橙色外發光（Glow） */
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), 
+                        inset -2px -2px 4px var(--shadow-light),
+                        0 0 8px rgba(255, 111, 0, 0.3); /* 橙色氛圍光 */
+            border-color: rgba(255,111,0,0.6); /* 將邊框顏色稍微加深少少 */
+            outline: none; 
         }
 
         /* Pad Grid */
