@@ -371,6 +371,7 @@
             if (!currentActiveInput) return;
             if (key === '.' && currentActiveInput.value.includes('.')) return;
             currentActiveInput.value += key;
+            triggerHaptic()
             calculate();
         }
 
@@ -475,6 +476,14 @@
                 lcdStatus.textContent = 'NET PROFIT';
             }
         }
+
+        function triggerHaptic() {
+            // navigator.vibrate 係瀏覽器內置功能，如果手機支援，就震 10 毫秒
+            if (window.navigator.vibrate) {
+                window.navigator.vibrate(10); 
+            }
+        }
+        
     </script>
 </body>
 </html>
