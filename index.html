@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#e3e7ee">
     
-    <title>CALC Stock-26 V6.2</title>
+    <title>CALC Stock-26 V6.5</title>
     <style>
         /* 全域佈局鎖死 */
         html, body { 
@@ -37,12 +37,10 @@
             --lcd-bg: #a6be9c; 
             --lcd-text: #12190e; 
             --transition-speed: 0.2s;
-            --main-gap: 2.2vh; 
+            --main-gap: 1.8vh; 
             --border-highlight: rgba(255, 255, 255, 0.9);
             --border-lowlight: rgba(0, 0, 0, 0.04);
-            
-            /* 👑 新增：專屬 Placeholder 殘影顏色 */
-            --placeholder-color: rgba(30, 37, 48, 0.18); 
+            --placeholder-color: rgba(30, 37, 48, 0.22); 
         }
         html.dark-mode { 
             --bg-color: #16181c; 
@@ -57,9 +55,7 @@
             --lcd-text: #ff761a; 
             --border-highlight: rgba(255, 255, 255, 0.08);
             --border-lowlight: rgba(0, 0, 0, 0.2);
-            
-            /* 暗黑模式殘影 */
-            --placeholder-color: rgba(241, 245, 249, 0.12);
+            --placeholder-color: rgba(241, 245, 249, 0.18);
         }
         
         body { 
@@ -68,8 +64,8 @@
             align-items: center; 
             justify-content: center; 
             box-sizing: border-box;
-            padding-top: calc(var(--main-gap) + max(20px, env(safe-area-inset-top, 0px)));
-            padding-bottom: calc(var(--main-gap) + max(28px, env(safe-area-inset-bottom, 0px)));
+            padding-top: calc(var(--main-gap) + max(16px, env(safe-area-inset-top, 0px)));
+            padding-bottom: calc(var(--main-gap) + max(24px, env(safe-area-inset-bottom, 0px)));
             padding-left: calc(20px + env(safe-area-inset-left, 0px));
             padding-right: calc(20px + env(safe-area-inset-right, 0px));
             transition: background-color var(--transition-speed) ease;
@@ -87,7 +83,7 @@
             max-width: 420px; 
             flex: 1;
             min-height: 0; 
-            max-height: 740px; 
+            max-height: 760px; 
             display: flex;
             flex-direction: column;
             justify-content: space-between; 
@@ -140,7 +136,7 @@
             flex-shrink: 1; 
             display: flex;
             flex-direction: column;
-            min-height: 120px; 
+            min-height: 110px; 
             overflow: hidden;
             transition: background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
         }
@@ -156,14 +152,14 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 8px 20px 0 20px;
+            padding: 6px 20px 0 20px;
         }
         .result-title { font-size: 0.72rem; color: var(--lcd-text) !important; opacity: 0.65; margin-bottom: 2px; letter-spacing: 0.5px; }
         
         .profit-value { 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
             font-variant-numeric: tabular-nums; 
-            font-size: calc(1.8rem + 0.8vh); 
+            font-size: calc(1.7rem + 0.7vh); 
             letter-spacing: -0.02em;
             font-weight: 700;
             color: var(--lcd-text) !important; 
@@ -176,7 +172,7 @@
             align-items: center; 
             justify-content: space-between; 
             border-top: 1px solid rgba(0,0,0,0.07); 
-            padding: 12px 20px; 
+            padding: 10px 20px; 
             gap: 4px; 
             flex-shrink: 0;
             background: rgba(0,0,0,0.02);
@@ -191,11 +187,78 @@
         .lcd-btn { background: rgba(0, 0, 0, 0.07); border: none; color: var(--lcd-text) !important; border-radius: 4px; width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem; cursor: pointer; font-weight: 800; padding: 0; margin: 0 1px; }
         html.dark-mode .lcd-btn { background: rgba(255, 255, 255, 0.08); }
 
+        /* Symbol Fetcher Row */
+        .symbol-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .symbol-field {
+            flex: 1;
+            position: relative;
+        }
+        .symbol-field input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            background: var(--case-color);
+            color: var(--text-color);
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            outline: none;
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+            user-select: text !important;
+            -webkit-user-select: text !important;
+            touch-action: auto !important;
+        }
+        .symbol-field input::placeholder {
+            color: var(--placeholder-color);
+        }
+        
+        /* 實體擬物化 Icon 按鈕 */
+        .fetch-btn-icon {
+            width: 48px;
+            height: 44px;
+            border-radius: 12px;
+            border: 1px solid var(--border-lowlight);
+            background: linear-gradient(135deg, var(--case-color) 0%, rgba(0,0,0,0.02) 100%), var(--case-color);
+            color: var(--text-muted) !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 
+                inset 1px 1px 0px var(--border-highlight),
+                2.5px 2.5px 5px var(--shadow-dark), 
+                -2.5px -2.5px 5px var(--shadow-light);
+            transition: transform 0.08s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.08s cubic-bezier(0.2, 0.8, 0.2, 1);
+            flex-shrink: 0;
+        }
+        .fetch-btn-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .fetch-btn-icon:active {
+            transform: translateY(1.5px);
+            box-shadow: 
+                inset 1px 1px 1px var(--border-lowlight),
+                1px 1.5px 3px var(--shadow-dark), 
+                -1px -1px 3px var(--shadow-light);
+            color: var(--primary-orange) !important;
+        }
+
         /* Input Grid */
         .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; flex-shrink: 0; }
         .casio-field label { font-size: 0.68rem; color: var(--text-muted) !important; margin-bottom: 5px; text-align: center; display: block; font-weight: 700; letter-spacing: 0.5px; }
         
-        /* 輸入框主體 */
         .casio-field input { 
             width: 100%; 
             padding: 12px 4px; 
@@ -207,24 +270,19 @@
             font-weight: 700;
             text-align: center; 
             outline: none; 
-            
-            /* 平時保持漂亮立體的「凸」起狀態 */
             box-shadow: 
                 inset 1px 1px 0px var(--border-highlight),
                 2.5px 2.5px 5px var(--shadow-dark), 
                 -2.5px -2.5px 5px var(--shadow-light); 
-                
             transition: box-shadow 0.15s ease, color 0.15s ease;
         }
         
-        /* 👑 修正 Placeholder：將原本的橫線換成「硬件液晶殘影色」 */
         .casio-field input::placeholder {
             color: var(--placeholder-color);
-            opacity: 1; /* 鎖死 iOS 預設透明度 */
+            opacity: 1;
             font-weight: 600;
         }
         
-        /* 當選取（Focused）時，切換成純淨的「凹」陷狀態 */
         .casio-field input.focused { 
             color: var(--text-color) !important; 
             border-color: transparent;           
@@ -234,7 +292,6 @@
                 0.5px 1px 0px var(--shadow-light); 
         }
         
-        /* 👑 當選取時，直接將 Placeholder 隱藏（完全乾淨，方便輸入） */
         .casio-field input.focused::placeholder {
             color: transparent;
         }
@@ -244,12 +301,11 @@
         .pad-top-row { grid-column: span 3; display: flex; gap: 11px; }
         .pad-top-row .pad-key { flex: 1; }
 
-        /* 按鍵物理下沉 */
         .pad-key { 
             border: 1px solid var(--border-lowlight); 
             background: linear-gradient(135deg, var(--case-color) 0%, rgba(0,0,0,0.01) 100%), var(--case-color); 
             color: var(--text-color) !important; 
-            padding: clamp(12px, 1.8vh, 18px) 0; 
+            padding: clamp(10px, 1.6vh, 16px) 0; 
             font-size: 1.25rem; 
             font-weight: 700;
             border-radius: 12px; 
@@ -279,7 +335,6 @@
             background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.05) 100%), var(--case-color);
         }
 
-        /* AC 按鍵 */
         .pad-c { 
             background: linear-gradient(135deg, var(--accent-orange) 0%, #e66400 100%) !important; 
             color: #ffffff !important; 
@@ -297,7 +352,7 @@
                 -1px -1px 3px var(--shadow-light) !important;
         }
 
-        /* Bottom Sheet */
+        /* Bottom Sheet 共用樣式 */
         .sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); display: none; z-index: 99; opacity: 0; transition: opacity 0.2s ease; }
         .sheet-overlay.open { display: block; opacity: 1; }
         
@@ -334,6 +389,37 @@
         .tier-header { font-weight: 700; color: var(--primary-orange); }
         .tier-header td { padding-top: 14px; border-bottom: 1px solid rgba(128,128,128,0.15); }
         
+        /* Prompt Cards 專屬樣式 */
+        .prompt-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+        .prompt-card {
+            background: rgba(0,0,0,0.015);
+            border-radius: 14px;
+            padding: 12px 14px;
+            border: 1px solid var(--border-lowlight);
+            box-shadow: inset 1px 1px 0px var(--border-highlight), 2px 2px 5px var(--shadow-dark);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+        html.dark-mode .prompt-card { background: rgba(0,0,0,0.15); }
+        .prompt-card:active { transform: scale(0.98); }
+        .prompt-info { flex: 1; margin-right: 10px; text-transform: none; }
+        .prompt-info .title { font-size: 0.82rem; font-weight: 700; color: var(--text-color); margin-bottom: 2px; }
+        .prompt-info .desc { font-size: 0.65rem; color: var(--text-muted); opacity: 0.8; text-transform: none; }
+        .copy-badge {
+            background: var(--case-color);
+            border: 1px solid var(--border-lowlight);
+            color: var(--primary-orange) !important;
+            font-size: 0.68rem;
+            font-weight: 800;
+            padding: 6px 10px;
+            border-radius: 8px;
+            box-shadow: inset 1px 1px 0px var(--border-highlight), 1.5px 1.5px 3px var(--shadow-dark);
+            flex-shrink: 0;
+        }
+
         .close-sheet { 
             width: 100%; padding: 14px; border-radius: 12px; border: none; 
             background: linear-gradient(180deg, var(--accent-orange) 0%, #d45d00 100%); 
@@ -367,7 +453,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="lcd-screen" id="lcdScreen">
             <div class="lcd-main-display">
                 <div class="result-title" id="lcdStatus">NET PROFIT</div>
@@ -385,6 +471,19 @@
                     <span id="slPriceDisplay">$0.00</span>
                 </div>
             </div>
+        </div>
+        
+        <!-- 美股代號與 AI Prompt 按鈕列 -->
+        <div class="symbol-row">
+            <div class="symbol-field">
+                <input type="text" id="tickerInput" placeholder="STOCK / ETF" autocomplete="off">
+            </div>
+            <button class="fetch-btn-icon" id="fetchBtn" aria-label="Search Stock">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </button>
+            <button class="fetch-btn-icon" id="aiPromptBtn" aria-label="AI Prompts" style="color: var(--primary-orange) !important;">
+                <svg viewBox="0 0 24 24"><path d="M12 3l1.912 5.813a2 2 0 001.275 1.275L21 12l-5.813 1.912a2 2 0 00-1.275 1.275L12 21l-1.912-5.813a2 2 0 00-1.275-1.275L3 12l5.813-1.912a2 2 0 001.275-1.275L12 3z"></path></svg>
+            </button>
         </div>
         
         <div class="input-grid">
@@ -411,6 +510,8 @@
     </div>
 
     <div class="sheet-overlay" id="sheetOverlay"></div>
+    
+    <!-- 費用細節 Bottom Sheet -->
     <div class="bottom-sheet" id="feeSheet">
         <div class="sheet-handle"></div>
         <div class="sheet-content">
@@ -430,11 +531,47 @@
                     </tbody>
                 </table>
             </div>
-            <button class="close-sheet" id="closeSheetBtn">CLOSE</button>
-            
-            <div class="version-footer-sheet">
-                V6.2 | HARDWARE LIQUID SHADOW ENGINE
+            <button class="close-sheet" class="closeSheetBtn">CLOSE</button>
+        </div>
+    </div>
+
+    <!-- AI Prompt Bottom Sheet -->
+    <div class="bottom-sheet" id="promptSheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-content">
+            <h3>AI RESEARCH PROMPTS</h3>
+            <div class="prompt-list">
+                <div class="prompt-card" data-prompt-id="1">
+                    <div class="prompt-info">
+                        <div class="title">1. 深度基本面與護城河</div>
+                        <div class="desc">商業模式、Morningstar 護城河評分、杜邦 ROE</div>
+                    </div>
+                    <div class="copy-badge">COPY</div>
+                </div>
+                <div class="prompt-card" data-prompt-id="2">
+                    <div class="prompt-info">
+                        <div class="title">2. 多空辯論與風險測試</div>
+                        <div class="desc">Bull vs Bear 催化劑、黑天鵝風險、壞變止損</div>
+                    </div>
+                    <div class="copy-badge">COPY</div>
+                </div>
+                <div class="prompt-card" data-prompt-id="3">
+                    <div class="prompt-info">
+                        <div class="title">3. 估值建模與安全邊際</div>
+                        <div class="desc">歷史 P/E 分位點、DCF 估值、情境目標價</div>
+                    </div>
+                    <div class="copy-badge">COPY</div>
+                </div>
+                <div class="prompt-card" data-prompt-id="4">
+                    <div class="prompt-info">
+                        <div class="title">4. 財報拆解與戰術擇時</div>
+                        <div class="desc">Beat/Miss 解讀、均線/RSI 擇時、分批建倉</div>
+                    </div>
+                    <div class="copy-badge">COPY</div>
+                </div>
             </div>
+            <button class="close-sheet" class="closeSheetBtn">CLOSE</button>
+            <div class="version-footer-sheet">V6.5 | AI PROMPT GENERATOR INTEGRATED</div>
         </div>
     </div>
 
@@ -442,13 +579,20 @@
         let stopLossPercent = 5;
         let currentActiveInput = null;
 
+        const promptsTemplates = {
+            1: `你係資深股權分析師。請分析 [SYMBOL]：\n* 商業模式與增長：拆解主要收入來源、TAM 潛在市場與第二增長曲線。\n* 競爭護城河：用 Morningstar 框架（無形資產/轉換成本/網絡效應/成本優勢）評分，並橫向對比主要競爭對手。\n* 財務質量：用杜邦分析法拆解 ROE/ROIC 趨勢，評估營運現金流與淨利匹配度。`,
+            2: `請模擬 [SYMBOL] 嘅多空辯論（Bull vs Bear）：\n* 多方論點：市場現時錯估（Variant Perception）咗乜嘢？未來 6-12 個月有乜關鍵催化劑（Catalysts）？\n* 空方論點與風險：條列宏觀、微觀與黑天鵝風險，並按發生機率同影響程度排序。\n* 止損條件：出現乜嘢基本面壞變（邏輯變更）時應該果斷止損？`,
+            3: `請對 [SYMBOL] 進行多維度估值：\n* 相對估值：提供過去 5 年 P/E、P/S 歷史分位點（Percentile）。\n* 絕對估值 (DCF)：假設未來 5 年 FCF 增長率為 X%、WACC 為 Y%，計算內在價值。\n* 情境目標價：建立 Base、Bull、Bear 三種情境目標價，並給出買入區間與安全邊際。`,
+            4: `請分析 [SYMBOL] 最新財報與交易戰術：\n* 財報解讀：營收/EPS 與預期對比（Beat/Miss %）、管理層 Guidance 語氣與潛台詞。\n* 技術與擇時：結合 20/50/200 日均線與 RSI，判斷目前超買定超賣。\n* 倉位管理：提供分批建倉策略，以及明確嘅止盈與止損位。`
+        };
+
         window.addEventListener('DOMContentLoaded', () => {
             const buyInput = document.getElementById('buyPrice');
             buyInput.classList.add('focused');
             currentActiveInput = buyInput;
 
             document.body.addEventListener('touchmove', function(e) {
-                if (!e.target.closest('.bottom-sheet')) {
+                if (!e.target.closest('.bottom-sheet') && !e.target.closest('#tickerInput')) {
                     e.preventDefault();
                 }
             }, { passive: false });
@@ -462,22 +606,77 @@
             document.body.classList.toggle('dark-mode');
         });
 
-        function openSheet() {
-            document.getElementById('feeSheet').classList.add('open');
+        function openSheet(sheetId) {
+            document.getElementById(sheetId).classList.add('open');
             document.getElementById('sheetOverlay').classList.add('open');
         }
 
-        function cancelOrCloseSheet() {
-            document.getElementById('feeSheet').classList.remove('open');
+        function closeAllSheets() {
+            document.querySelectorAll('.bottom-sheet').forEach(s => s.classList.remove('open'));
             document.getElementById('sheetOverlay').classList.remove('open');
         }
 
         ['buyPrice', 'sellPrice', 'shares'].forEach(id => {
             document.getElementById(id).addEventListener('click', (e) => {
-                document.querySelectorAll('input').forEach(i => i.classList.remove('focused'));
+                document.querySelectorAll('.casio-field input').forEach(i => i.classList.remove('focused'));
                 e.target.classList.add('focused');
                 currentActiveInput = e.target;
             });
+        });
+
+        /* 免費抓取美股即時股價邏輯 */
+        async function fetchStockPrice() {
+            const tickerInput = document.getElementById('tickerInput');
+            const symbol = tickerInput.value.trim().toUpperCase();
+            if (!symbol) return;
+
+            const lcdStatus = document.getElementById('lcdStatus');
+            lcdStatus.textContent = 'FETCHING...';
+
+            try {
+                const response = await fetch(`https://corsproxy.io/?https://query1.finance.yahoo.com/v8/finance/chart/${symbol}`);
+                const data = await response.json();
+                const price = data.chart.result[0].meta.regularMarketPrice;
+
+                if (price) {
+                    const buyInput = document.getElementById('buyPrice');
+                    buyInput.value = price.toFixed(2);
+                    lcdStatus.textContent = `${symbol} $${price.toFixed(2)}`;
+                    
+                    document.querySelectorAll('.casio-field input').forEach(i => i.classList.remove('focused'));
+                    buyInput.classList.add('focused');
+                    currentActiveInput = buyInput;
+                    
+                    calculate();
+                } else {
+                    lcdStatus.textContent = 'NOT FOUND';
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                lcdStatus.textContent = 'FETCH ERROR';
+            }
+        }
+
+        function copyPrompt(id) {
+            const symbolInput = document.getElementById('tickerInput').value.trim().toUpperCase();
+            const symbol = symbolInput || '該股票';
+            const textToCopy = promptsTemplates[id].replace(/\[SYMBOL\]/g, symbol);
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const lcdStatus = document.getElementById('lcdStatus');
+                lcdStatus.textContent = `PROMPT ${id} COPIED`;
+                closeAllSheets();
+            }).catch(err => {
+                console.error('Copy failed:', err);
+            });
+        }
+
+        document.getElementById('fetchBtn').addEventListener('click', fetchStockPrice);
+        document.getElementById('tickerInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.target.blur();
+                fetchStockPrice();
+            }
         });
 
         function setupTouchEvents() {
@@ -509,9 +708,19 @@
                 el.addEventListener('click', (e) => { fn(); });
             };
 
-            bindClickAndTouch(document.getElementById('infoBtn'), openSheet);
-            bindClickAndTouch(document.getElementById('sheetOverlay'), cancelOrCloseSheet);
-            bindClickAndTouch(document.getElementById('closeSheetBtn'), cancelOrCloseSheet);
+            bindClickAndTouch(document.getElementById('infoBtn'), () => openSheet('feeSheet'));
+            bindClickAndTouch(document.getElementById('aiPromptBtn'), () => openSheet('promptSheet'));
+            bindClickAndTouch(document.getElementById('sheetOverlay'), closeAllSheets);
+            
+            document.querySelectorAll('.closeSheetBtn').forEach(btn => {
+                bindClickAndTouch(btn, closeAllSheets);
+            });
+
+            document.querySelectorAll('.prompt-card').forEach(card => {
+                const promptId = card.getAttribute('data-prompt-id');
+                bindClickAndTouch(card, () => copyPrompt(promptId));
+            });
+
             bindClickAndTouch(document.getElementById('slMinusBtn'), () => adjustSL(-1));
             bindClickAndTouch(document.getElementById('slPlusBtn'), () => adjustSL(1));
         }
@@ -548,6 +757,7 @@
 
         function resetAll() {
             ['buyPrice', 'sellPrice', 'shares'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('tickerInput').value = '';
             calculate();
         }
 
@@ -617,7 +827,7 @@
                     profitDisplay.textContent = '-$' + Math.abs(netProfit).toFixed(2);
                 }
                 lcdStatus.textContent = (netProfit >= 0 ? 'PROFIT' : 'LOSS') + ' [' + ((netProfit / totalCost) * 100).toFixed(2) + '%]';
-            } else {
+            } else if (!lcdStatus.textContent.includes('$') && !lcdStatus.textContent.includes('FETCH') && !lcdStatus.textContent.includes('COPIED')) {
                 profitDisplay.textContent = '$0.00';
                 lcdStatus.textContent = 'NET PROFIT';
             }
