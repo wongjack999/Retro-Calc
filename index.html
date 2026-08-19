@@ -7,14 +7,24 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#e3e7ee">
     
-    <title>CALC Stock-26 V6.6</title>
+    <title>CALC Stock-26 V6.7</title>
     <style>
-        /* 全域佈局鎖死 */
-        html, body { 
-            margin: 0; 
-            padding: 0; 
+        /* 核心修復：鎖死高度，防止 Safari 滾動及遮擋鍵盤 */
+        html { 
+            height: 100%; 
+            overflow: hidden; 
+        }
+
+        body { 
             width: 100%; 
-            height: 100vh; 
+            height: 100%; 
+            margin: 0; 
+            padding: 0;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            box-sizing: border-box;
             background-color: var(--bg-color); 
             -webkit-tap-highlight-color: transparent; 
             user-select: none; 
@@ -22,6 +32,12 @@
             touch-action: none; 
             -webkit-touch-callout: none; 
             overflow: hidden; 
+            /* 配合 Safe Area 邊界，防止被頂部/底部網址列遮蓋 */
+            padding-top: max(8px, env(safe-area-inset-top, 0px));
+            padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+            padding-left: 16px;
+            padding-right: 16px;
+            transition: background-color var(--transition-speed) ease;
         }
         
         :root { 
@@ -36,7 +52,6 @@
             --lcd-bg: #a6be9c; 
             --lcd-text: #12190e; 
             --transition-speed: 0.2s;
-            --main-gap: 1.5vh; 
             --border-highlight: rgba(255, 255, 255, 0.9);
             --border-lowlight: rgba(0, 0, 0, 0.04);
             --placeholder-color: rgba(30, 37, 48, 0.22); 
@@ -57,19 +72,6 @@
             --placeholder-color: rgba(241, 245, 249, 0.18);
         }
         
-        body { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            box-sizing: border-box;
-            padding-top: calc(8px + env(safe-area-inset-top, 0px));
-            padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
-            padding-left: calc(20px + env(safe-area-inset-left, 0px));
-            padding-right: calc(20px + env(safe-area-inset-right, 0px));
-            transition: background-color var(--transition-speed) ease;
-        }
-        
         * { 
             box-sizing: border-box; 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -77,26 +79,28 @@
             text-transform: uppercase; 
         }
 
+        /* 主容器自適應，縮小 gap 防止推落底 */
         .layout-container { 
             width: 100%; 
             max-width: 420px; 
             height: 100%;
+            max-height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: space-between; 
-            gap: var(--main-gap); 
+            gap: 8px; 
         }
 
         /* Top Bar */
-        .top-bar { display: flex; justify-content: space-between; align-items: center; height: 32px; flex-shrink: 0; }
-        .brand-logo { font-size: 1.1rem; letter-spacing: 1.5px; color: var(--text-color) !important; font-weight: 700; text-shadow: 0.5px 0.5px 0px var(--shadow-light); }
-        .brand-logo span { font-size: 0.65rem; vertical-align: super; margin-left: 2px; opacity: 0.8; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; height: 28px; flex-shrink: 0; }
+        .brand-logo { font-size: 1.05rem; letter-spacing: 1.5px; color: var(--text-color) !important; font-weight: 700; text-shadow: 0.5px 0.5px 0px var(--shadow-light); }
+        .brand-logo span { font-size: 0.6rem; vertical-align: super; margin-left: 2px; opacity: 0.8; }
         .top-controls { display: flex; align-items: center; height: 100%; }
         
         /* 太陽能板 */
         .switch-container { 
-            width: 86px; 
-            height: 26px; 
+            width: 80px; 
+            height: 24px; 
             border-radius: 6px; 
             background: linear-gradient(180deg, #2d1916 0%, #1a0d0b 100%); 
             box-shadow: inset 2px 2px 5px rgba(0,0,0,0.65), 1px 1px 1px var(--shadow-light); 
@@ -109,31 +113,30 @@
         .solar-cells { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: space-evenly; pointer-events: none; z-index: 0; }
         .solar-cells span { width: 1px; height: 100%; background: rgba(255, 255, 255, 0.05); box-shadow: -0.5px 0 0 rgba(0,0,0,0.5); }
         .switch-container::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 65%); pointer-events: none; z-index: 3; }
-        .switch-icon { position: absolute; top: 5px; width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; z-index: 1; pointer-events: none; opacity: 0.9; }
-        .sun-icon { left: 10px; color: #ffb300; } 
-        .moon-icon { right: 10px; color: #e2e8f0; } 
-        .switch-thumb { position: absolute; top: 2px; left: 2px; width: 36px; height: 20px; border-radius: 4px; background: linear-gradient(180deg, #f3f4f6 0%, #c5cbd3 100%); box-shadow: 1px 1px 4px rgba(0,0,0,0.55), inset 1px 1px 0px #ffffff; transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; align-items: center; justify-content: center; z-index: 2; }
-        .switch-thumb::before { content: ''; width: 10px; height: 11px; background: repeating-linear-gradient(90deg, #9ca3af, #9ca3af 2px, transparent 2px, transparent 4px); }
-        html.dark-mode .switch-thumb { transform: translateX(46px); background: linear-gradient(180deg, var(--primary-orange) 0%, #d45d00 100%); box-shadow: 0 0 6px rgba(255,111,0,0.45), inset 1px 1px 0px rgba(255,255,255,0.35); }
+        .switch-icon { position: absolute; top: 4px; width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; z-index: 1; pointer-events: none; opacity: 0.9; }
+        .sun-icon { left: 8px; color: #ffb300; } 
+        .moon-icon { right: 8px; color: #e2e8f0; } 
+        .switch-thumb { position: absolute; top: 2px; left: 2px; width: 34px; height: 18px; border-radius: 4px; background: linear-gradient(180deg, #f3f4f6 0%, #c5cbd3 100%); box-shadow: 1px 1px 4px rgba(0,0,0,0.55), inset 1px 1px 0px #ffffff; transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; align-items: center; justify-content: center; z-index: 2; }
+        .switch-thumb::before { content: ''; width: 10px; height: 10px; background: repeating-linear-gradient(90deg, #9ca3af, #9ca3af 2px, transparent 2px, transparent 4px); }
+        html.dark-mode .switch-thumb { transform: translateX(42px); background: linear-gradient(180deg, var(--primary-orange) 0%, #d45d00 100%); box-shadow: 0 0 6px rgba(255,111,0,0.45), inset 1px 1px 0px rgba(255,255,255,0.35); }
         html.dark-mode .switch-thumb::before { background: repeating-linear-gradient(90deg, #ffffff, #ffffff 2px, transparent 2px, transparent 4px); opacity: 0.7; }
 
-        /* LCD 面板 */
+        /* LCD 面板 - 設定 flex: 1 自動適應螢幕大小 */
         .lcd-screen { 
             background-color: var(--lcd-bg); 
             background-image: radial-gradient(rgba(26, 37, 21, 0.05) 0.6px, transparent 0.6px);
             background-size: 2px 2px;
             padding: 0; 
-            border-radius: 22px; 
+            border-radius: 20px; 
             box-shadow: inset 4px 4px 9px rgba(0,0,0,0.3), 
                         inset -1px -1px 3px rgba(255,255,255,0.25),
                         0.5px 1.5px 0px var(--shadow-light); 
             border: 1px solid var(--border-lowlight);
             text-align: right; 
-            flex-grow: 1; 
-            flex-shrink: 1; 
+            flex: 1; 
+            min-height: 85px; 
             display: flex;
             flex-direction: column;
-            min-height: 100px; 
             overflow: hidden;
             transition: background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
         }
@@ -149,14 +152,14 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 4px 18px 0 18px;
+            padding: 2px 16px 0 16px;
         }
-        .result-title { font-size: 0.7rem; color: var(--lcd-text) !important; opacity: 0.65; margin-bottom: 2px; letter-spacing: 0.5px; }
+        .result-title { font-size: 0.65rem; color: var(--lcd-text) !important; opacity: 0.65; margin-bottom: 2px; letter-spacing: 0.5px; }
         
         .profit-value { 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
             font-variant-numeric: tabular-nums; 
-            font-size: calc(1.6rem + 0.6vh); 
+            font-size: calc(1.5rem + 0.4vh); 
             letter-spacing: -0.02em;
             font-weight: 700;
             color: var(--lcd-text) !important; 
@@ -169,40 +172,37 @@
             align-items: center; 
             justify-content: space-between; 
             border-top: 1px solid rgba(0,0,0,0.07); 
-            padding: 8px 18px; 
+            padding: 6px 14px; 
             gap: 4px; 
             flex-shrink: 0;
             background: rgba(0,0,0,0.02);
         }
         html.dark-mode .lcd-fee-row { border-top-color: rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); }
         
-        .fee-label { font-size: 0.65rem; color: var(--lcd-text) !important; opacity: 0.65; display: inline-flex; align-items: center; }
-        .info-icon { width: 13px; height: 13px; border: 1px solid var(--lcd-text); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; margin-left: 4px; cursor: pointer; opacity: 0.6; font-style: italic; font-weight: bold; }
-        .fee-item-compact { font-size: 0.65rem; color: var(--lcd-text) !important; opacity: 0.65; }
+        .fee-label { font-size: 0.6rem; color: var(--lcd-text) !important; opacity: 0.65; display: inline-flex; align-items: center; }
+        .info-icon { width: 12px; height: 12px; border: 1px solid var(--lcd-text); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 8px; margin-left: 3px; cursor: pointer; opacity: 0.6; font-style: italic; font-weight: bold; }
+        .fee-item-compact { font-size: 0.6rem; color: var(--lcd-text) !important; opacity: 0.65; }
         
-        .lcd-sl-group { display: flex; align-items: center; gap: 4px; font-size: 0.65rem; color: var(--lcd-text) !important; opacity: 0.65; }
-        .lcd-btn { background: rgba(0, 0, 0, 0.07); border: none; color: var(--lcd-text) !important; border-radius: 4px; width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem; cursor: pointer; font-weight: 800; padding: 0; margin: 0 1px; }
+        .lcd-sl-group { display: flex; align-items: center; gap: 3px; font-size: 0.6rem; color: var(--lcd-text) !important; opacity: 0.65; }
+        .lcd-btn { background: rgba(0, 0, 0, 0.07); border: none; color: var(--lcd-text) !important; border-radius: 3px; width: 15px; height: 15px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.65rem; cursor: pointer; font-weight: 800; padding: 0; margin: 0 1px; }
         html.dark-mode .lcd-btn { background: rgba(255, 255, 255, 0.08); }
 
         /* Symbol Fetcher Row */
         .symbol-row {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
             flex-shrink: 0;
         }
-        .symbol-field {
-            flex: 1;
-            position: relative;
-        }
+        .symbol-field { flex: 1; }
         .symbol-field input {
             width: 100%;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-radius: 12px;
             border: 1px solid transparent;
             background: var(--case-color);
             color: var(--text-color);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 700;
             letter-spacing: 1px;
             outline: none;
@@ -211,15 +211,12 @@
             -webkit-user-select: text !important;
             touch-action: auto !important;
         }
-        .symbol-field input::placeholder {
-            color: var(--placeholder-color);
-        }
+        .symbol-field input::placeholder { color: var(--placeholder-color); }
         
-        /* 實體擬物化 Icon 按鈕 */
         .fetch-btn-icon {
-            width: 44px;
-            height: 40px;
-            border-radius: 12px;
+            width: 40px;
+            height: 36px;
+            border-radius: 10px;
             border: 1px solid var(--border-lowlight);
             background: linear-gradient(135deg, var(--case-color) 0%, rgba(0,0,0,0.02) 100%), var(--case-color);
             color: var(--text-muted) !important;
@@ -231,39 +228,28 @@
                 inset 1px 1px 0px var(--border-highlight),
                 2.5px 2.5px 5px var(--shadow-dark), 
                 -2.5px -2.5px 5px var(--shadow-light);
-            transition: transform 0.08s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.08s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: transform 0.08s ease, box-shadow 0.08s ease;
             flex-shrink: 0;
         }
-        .fetch-btn-icon svg {
-            width: 18px;
-            height: 18px;
-            stroke: currentColor;
-            stroke-width: 2;
-            fill: none;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
+        .fetch-btn-icon svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
         .fetch-btn-icon:active {
             transform: translateY(1.5px);
-            box-shadow: 
-                inset 1px 1px 1px var(--border-lowlight),
-                1px 1.5px 3px var(--shadow-dark), 
-                -1px -1px 3px var(--shadow-light);
+            box-shadow: inset 1px 1px 1px var(--border-lowlight), 1px 1.5px 3px var(--shadow-dark), -1px -1px 3px var(--shadow-light);
             color: var(--primary-orange) !important;
         }
 
         /* Input Grid */
-        .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex-shrink: 0; }
-        .casio-field label { font-size: 0.65rem; color: var(--text-muted) !important; margin-bottom: 4px; text-align: center; display: block; font-weight: 700; letter-spacing: 0.5px; }
+        .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; flex-shrink: 0; }
+        .casio-field label { font-size: 0.6rem; color: var(--text-muted) !important; margin-bottom: 3px; text-align: center; display: block; font-weight: 700; letter-spacing: 0.5px; }
         
         .casio-field input { 
             width: 100%; 
-            padding: 10px 4px; 
+            padding: 8px 4px; 
             border: 1px solid transparent; 
-            border-radius: 12px; 
+            border-radius: 10px; 
             background: var(--case-color); 
             color: var(--text-color) !important; 
-            font-size: 1.1rem; 
+            font-size: 1rem; 
             font-weight: 700;
             text-align: center; 
             outline: none; 
@@ -273,12 +259,7 @@
                 -2.5px -2.5px 5px var(--shadow-light); 
             transition: box-shadow 0.15s ease, color 0.15s ease;
         }
-        
-        .casio-field input::placeholder {
-            color: var(--placeholder-color);
-            opacity: 1;
-            font-weight: 600;
-        }
+        .casio-field input::placeholder { color: var(--placeholder-color); opacity: 1; font-weight: 600; }
         
         .casio-field input.focused { 
             color: var(--text-color) !important; 
@@ -288,31 +269,28 @@
                 inset -2.5px -2.5px 5px var(--shadow-light),
                 0.5px 1px 0px var(--shadow-light); 
         }
-        
-        .casio-field input.focused::placeholder {
-            color: transparent;
-        }
+        .casio-field input.focused::placeholder { color: transparent; }
 
-        /* Pad Grid */
-        .pad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex-shrink: 0; }
-        .pad-top-row { grid-column: span 3; display: flex; gap: 10px; }
+        /* Pad Grid - 控制邊界高度 */
+        .pad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; flex-shrink: 0; }
+        .pad-top-row { grid-column: span 3; display: flex; gap: 8px; }
         .pad-top-row .pad-key { flex: 1; }
 
         .pad-key { 
             border: 1px solid var(--border-lowlight); 
             background: linear-gradient(135deg, var(--case-color) 0%, rgba(0,0,0,0.01) 100%), var(--case-color); 
             color: var(--text-color) !important; 
-            padding: clamp(8px, 1.4vh, 14px) 0; 
-            font-size: 1.2rem; 
+            padding: clamp(6px, 1.2vh, 12px) 0; 
+            font-size: 1.15rem; 
             font-weight: 700;
-            border-radius: 12px; 
+            border-radius: 10px; 
             cursor: pointer; 
             position: relative;
             box-shadow: 
                 inset 1px 1px 0px var(--border-highlight),
-                3px 3px 6px var(--shadow-dark), 
-                -3px -3px 6px var(--shadow-light); 
-            transition: transform 0.08s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.08s cubic-bezier(0.2, 0.8, 0.2, 1);
+                2.5px 2.5px 5px var(--shadow-dark), 
+                -2.5px -2.5px 5px var(--shadow-light); 
+            transition: transform 0.08s ease, box-shadow 0.08s ease;
         }
         .pad-key:active { 
             transform: translateY(1.5px);
@@ -325,12 +303,9 @@
         .pad-fn { 
             background: linear-gradient(135deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.06) 100%), var(--case-color);
             color: var(--text-muted) !important; 
-            font-weight: 700; 
-            font-size: 1rem; 
+            font-size: 0.95rem; 
         }
-        html.dark-mode .pad-fn {
-            background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.05) 100%), var(--case-color);
-        }
+        html.dark-mode .pad-fn { background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.05) 100%), var(--case-color); }
 
         .pad-c { 
             background: linear-gradient(135deg, var(--accent-orange) 0%, #e66400 100%) !important; 
@@ -338,15 +313,8 @@
             border-color: rgba(0, 0, 0, 0.15);
             box-shadow: 
                 inset 1px 1px 0px rgba(255,255,255,0.3),
-                3px 3px 6px var(--shadow-dark), 
+                2.5px 2.5px 5px var(--shadow-dark), 
                 -2px -2px 5px var(--shadow-light) !important;
-        }
-        .pad-c:active { 
-            background: linear-gradient(135deg, #e66400 0%, #cc5900 100%) !important; 
-            box-shadow: 
-                inset 1px 1px 1px rgba(0,0,0,0.2),
-                1px 1.5px 3px var(--shadow-dark), 
-                -1px -1px 3px var(--shadow-light) !important;
         }
 
         /* Bottom Sheet 共用樣式 */
@@ -356,8 +324,8 @@
         .bottom-sheet { 
             position: fixed; bottom: 0; left: 0; width: 100%; 
             background: var(--case-color); 
-            border-radius: 30px 30px 0 0; 
-            padding: 16px 24px 20px 24px; 
+            border-radius: 26px 26px 0 0; 
+            padding: 16px 20px 20px 20px; 
             padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); 
             transform: translateY(100%); 
             transition: transform 0.3s cubic-bezier(0.15, 0.85, 0.2, 1); 
@@ -367,68 +335,64 @@
             touch-action: pan-y; 
         }
         .bottom-sheet.open { transform: translateY(0); }
-        .sheet-handle { width: 40px; height: 5px; background: rgba(0, 0, 0, 0.1); border-radius: 3px; margin: 0 auto 16px auto; }
+        .sheet-handle { width: 36px; height: 4px; background: rgba(0, 0, 0, 0.1); border-radius: 2px; margin: 0 auto 14px auto; }
         html.dark-mode .sheet-handle { background: rgba(255,255,255,0.15); }
-        .sheet-content h3 { margin: 0 0 14px 0; color: var(--text-color); font-size: 1.05rem; text-align: center; font-weight: 700; }
+        .sheet-content h3 { margin: 0 0 12px 0; color: var(--text-color); font-size: 1rem; text-align: center; font-weight: 700; }
         
         .sheet-panel-debossed {
             background: rgba(0, 0, 0, 0.015);
-            padding: 14px; border-radius: 16px;
+            padding: 12px; border-radius: 14px;
             box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             border: 1px solid var(--border-lowlight);
         }
         html.dark-mode .sheet-panel-debossed { background: rgba(0, 0, 0, 0.15); box-shadow: inset 2.5px 2.5px 5px var(--shadow-dark); }
-        .fee-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; color: var(--text-color); }
-        .fee-table th { color: var(--text-muted); padding: 8px; text-align: left; font-size: 0.65rem; border-bottom: 1.5px solid rgba(128,128,128,0.15); }
-        .fee-table td { padding: 9px 8px; border-bottom: 1px solid rgba(128,128,128,0.1); }
-        .fee-table tr:last-child td { border-bottom: none; }
+        .fee-table { width: 100%; border-collapse: collapse; font-size: 0.72rem; color: var(--text-color); }
+        .fee-table th { color: var(--text-muted); padding: 6px; text-align: left; font-size: 0.6rem; border-bottom: 1.5px solid rgba(128,128,128,0.15); }
+        .fee-table td { padding: 8px 6px; border-bottom: 1px solid rgba(128,128,128,0.1); }
         .tier-header { font-weight: 700; color: var(--primary-orange); }
-        .tier-header td { padding-top: 14px; border-bottom: 1px solid rgba(128,128,128,0.15); }
+        .tier-header td { padding-top: 12px; border-bottom: 1px solid rgba(128,128,128,0.15); }
         
-        /* Prompt Cards 專屬樣式 */
-        .prompt-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+        /* Prompt Cards */
+        .prompt-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
         .prompt-card {
             background: rgba(0,0,0,0.015);
-            border-radius: 14px;
-            padding: 12px 14px;
+            border-radius: 12px;
+            padding: 10px 12px;
             border: 1px solid var(--border-lowlight);
             box-shadow: inset 1px 1px 0px var(--border-highlight), 2px 2px 5px var(--shadow-dark);
             display: flex;
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
-            transition: transform 0.1s ease;
         }
         html.dark-mode .prompt-card { background: rgba(0,0,0,0.15); }
         .prompt-card:active { transform: scale(0.98); }
-        .prompt-info { flex: 1; margin-right: 10px; text-transform: none; }
-        .prompt-info .title { font-size: 0.82rem; font-weight: 700; color: var(--text-color); margin-bottom: 2px; }
-        .prompt-info .desc { font-size: 0.65rem; color: var(--text-muted); opacity: 0.8; text-transform: none; }
+        .prompt-info { flex: 1; margin-right: 8px; text-transform: none; }
+        .prompt-info .title { font-size: 0.8rem; font-weight: 700; color: var(--text-color); margin-bottom: 2px; }
+        .prompt-info .desc { font-size: 0.62rem; color: var(--text-muted); opacity: 0.8; text-transform: none; }
         .copy-badge {
             background: var(--case-color);
             border: 1px solid var(--border-lowlight);
             color: var(--primary-orange) !important;
-            font-size: 0.68rem;
+            font-size: 0.65rem;
             font-weight: 800;
-            padding: 6px 10px;
-            border-radius: 8px;
+            padding: 5px 8px;
+            border-radius: 6px;
             box-shadow: inset 1px 1px 0px var(--border-highlight), 1.5px 1.5px 3px var(--shadow-dark);
             flex-shrink: 0;
         }
 
         .close-sheet { 
-            width: 100%; padding: 14px; border-radius: 12px; border: none; 
+            width: 100%; padding: 12px; border-radius: 10px; border: none; 
             background: linear-gradient(180deg, var(--accent-orange) 0%, #d45d00 100%); 
-            color: white; font-size: 1.05rem; font-weight: bold; cursor: pointer; 
+            color: white; font-size: 1rem; font-weight: bold; cursor: pointer; 
             box-shadow: 0 4px 10px rgba(255,111,0,0.25); 
-            transition: all 0.1s ease;
         }
-        .close-sheet:active { transform: translateY(1px); box-shadow: 0 2px 5px rgba(255,111,0,0.25); }
 
         .version-footer-sheet { 
-            margin-top: 16px; 
-            font-size: 0.58rem; 
+            margin-top: 12px; 
+            font-size: 0.55rem; 
             color: var(--text-muted); 
             text-align: center; 
             opacity: 0.5; 
@@ -470,7 +434,6 @@
             </div>
         </div>
         
-        <!-- 美股代號與 AI Prompt 按鈕列 -->
         <div class="symbol-row">
             <div class="symbol-field">
                 <input type="text" id="tickerInput" placeholder="STOCK / ETF" autocomplete="off">
@@ -568,7 +531,7 @@
                 </div>
             </div>
             <button class="close-sheet" class="closeSheetBtn">CLOSE</button>
-            <div class="version-footer-sheet">V6.6 | AI PROMPT GENERATOR INTEGRATED</div>
+            <div class="version-footer-sheet">V6.7 | SAFARI FIT FIXED</div>
         </div>
     </div>
 
@@ -621,7 +584,6 @@
             });
         });
 
-        /* 免費抓取美股即時股價邏輯 */
         async function fetchStockPrice() {
             const tickerInput = document.getElementById('tickerInput');
             const symbol = tickerInput.value.trim().toUpperCase();
