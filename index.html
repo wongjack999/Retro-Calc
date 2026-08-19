@@ -85,7 +85,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between; 
-            gap: 12px; 
+            gap: 10px; 
             box-shadow: none !important;
             border: none !important;
             background: transparent;
@@ -121,7 +121,7 @@
         html.dark-mode .switch-thumb { transform: translateX(42px); background: linear-gradient(180deg, var(--primary-orange) 0%, #d45d00 100%); box-shadow: 0 0 6px rgba(255,111,0,0.45), inset 1px 1px 0px rgba(255,255,255,0.35); }
         html.dark-mode .switch-thumb::before { background: repeating-linear-gradient(90deg, #ffffff, #ffffff 2px, transparent 2px, transparent 4px); opacity: 0.7; }
 
-        /* 1. 限制 LCD 高度，唔再無限拉大 */
+        /* LCD Screen */
         .lcd-screen { 
             background-color: var(--lcd-bg); 
             background-image: radial-gradient(rgba(26, 37, 21, 0.05) 0.6px, transparent 0.6px);
@@ -133,7 +133,7 @@
                         0.5px 1.5px 0px var(--shadow-light); 
             border: 1px solid var(--border-lowlight);
             text-align: right; 
-            height: clamp(120px, 22vh, 150px); /* 限制螢幕高度比例 */
+            height: clamp(120px, 20vh, 145px);
             flex-shrink: 0; 
             display: flex;
             flex-direction: column;
@@ -186,6 +186,80 @@
         .lcd-btn { background: rgba(0, 0, 0, 0.07); border: none; color: var(--lcd-text) !important; border-radius: 3px; width: 15px; height: 15px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.65rem; cursor: pointer; font-weight: 800; padding: 0; margin: 0 1px; }
         html.dark-mode .lcd-btn { background: rgba(255, 255, 255, 0.08); }
 
+        /* Search Row (補回搜尋區域) */
+        .search-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .search-field {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: var(--case-color);
+            border-radius: 14px;
+            padding: 0 12px;
+            height: 42px;
+            box-shadow: 
+                inset 1px 1px 0px var(--border-highlight),
+                2px 2px 4px var(--shadow-dark), 
+                -2px -2px 4px var(--shadow-light);
+        }
+
+        .search-field input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: var(--text-color) !important;
+            font-size: 0.85rem;
+            font-weight: 700;
+            outline: none;
+            letter-spacing: 0.5px;
+        }
+
+        .search-field input::placeholder {
+            color: var(--placeholder-color);
+            opacity: 1;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: var(--case-color);
+            border: 1px solid var(--border-lowlight);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            box-shadow: 
+                inset 1px 1px 0px var(--border-highlight),
+                2px 2px 4px var(--shadow-dark), 
+                -2px -2px 4px var(--shadow-light);
+            transition: transform 0.08s ease;
+        }
+
+        .icon-btn:active {
+            transform: translateY(1px);
+        }
+
+        .icon-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--text-muted);
+            fill: none;
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .ai-btn svg {
+            stroke: var(--accent-orange);
+        }
+
         /* Input Grid */
         .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; flex-shrink: 0; }
         .casio-field label { font-size: 0.6rem; color: var(--text-muted) !important; margin-bottom: 3px; text-align: center; display: block; font-weight: 700; letter-spacing: 0.5px; }
@@ -219,7 +293,7 @@
         }
         .casio-field input.focused::placeholder { color: transparent; }
 
-        /* 2. 鍵盤區域設為 flex: 1，讓按鈕自動拉高 fill 滿下半部 */
+        /* Keypad Grid */
         .pad-grid { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
@@ -360,6 +434,19 @@
                 </div>
             </div>
         </div>
+
+        <!-- 搜尋功能列 (補回) -->
+        <div class="search-row">
+            <div class="search-field">
+                <input type="text" placeholder="STOCK / ETF" id="stockSearchInput" autocomplete="off">
+            </div>
+            <button class="icon-btn" id="searchBtn">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </button>
+            <button class="icon-btn ai-btn" id="aiBtn">
+                <svg viewBox="0 0 24 24"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"></path></svg>
+            </button>
+        </div>
         
         <div class="input-grid">
             <div class="casio-field"><label>BUY</label><input type="text" id="buyPrice" placeholder="$ 0.00" inputmode="none" readonly autocomplete="off"></div>
@@ -407,7 +494,7 @@
                 </table>
             </div>
             <button class="close-sheet" id="closeSheetBtn">CLOSE</button>
-            <div class="version-footer-sheet">V6.6 | RATIO FIXED</div>
+            <div class="version-footer-sheet">V6.6 | RATIO & SEARCH FIXED</div>
         </div>
     </div>
 
@@ -478,6 +565,7 @@
             });
 
             const bindClickAndTouch = (el, fn) => {
+                if(!el) return;
                 el.addEventListener('touchstart', (e) => { e.preventDefault(); fn(); }, { passive: false });
                 el.addEventListener('click', (e) => { fn(); });
             };
