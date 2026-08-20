@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#e3e7ee">
     
-    <title>CALC Stock-26 V6.6</title>
+    <title>CALC Stock-26 V6.8</title>
     <style>
         html, body { 
             margin: 0; 
@@ -553,7 +553,7 @@
                 </div>
             </div>
             <button class="close-sheet closeSheetBtn">CLOSE</button>
-            <div class="version-footer-sheet">V6.7 | CORSPROXY INTEGRATED</div>
+            <div class="version-footer-sheet">V6.8 | FINNHUB + YAHOO DUAL ENGINE</div>
         </div>
     </div>
 
@@ -606,7 +606,7 @@
             });
         });
 
-        /* 使用 corsproxy.io 代理抓取美股即時股價 */
+        /* 雙引擎抓取美股價格：Finnhub + Thingproxy 備用 */
         async function fetchStockPrice() {
             const tickerInput = document.getElementById('tickerInput');
             const symbol = tickerInput.value.trim().toUpperCase();
@@ -618,29 +618,48 @@
             const lcdStatus = document.getElementById('lcdStatus');
             lcdStatus.textContent = 'FETCHING...';
 
+            // 引擎 1: Finnhub API (原生支援 CORS，最穩定)
             try {
-                // 已更換為穩定嘅 corsproxy.io 代理，解決 Vercel 上跨域同 IP 封鎖問題
-                const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}`)}`);
+                const response = await fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=sandbox_c89i3i2ad3ic8q227ut0`);
+                const data = await response.json();
+                
+                if (data && data.c > 0) {
+                    const price = data.c;
+                    applyFetchedPrice(symbol, price);
+                    return;
+                }
+            } catch (e) {
+                console.warn('Finnhub fetch failed, switching to backup engine:', e);
+            }
+
+            // 引擎 2: Thingproxy + Yahoo Finance (備用)
+            try {
+                const targetUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}`;
+                const response = await fetch(`https://thingproxy.freeboard.io/fetch/${targetUrl}`);
                 const data = await response.json();
                 const price = data?.chart?.result?.[0]?.meta?.regularMarketPrice;
 
                 if (price) {
-                    const buyInput = document.getElementById('buyPrice');
-                    buyInput.value = price.toFixed(2);
-                    lcdStatus.textContent = `${symbol} $${price.toFixed(2)}`;
-                    
-                    document.querySelectorAll('.casio-field input').forEach(i => i.classList.remove('focused'));
-                    buyInput.classList.add('focused');
-                    currentActiveInput = buyInput;
-                    
-                    calculate();
-                } else {
-                    lcdStatus.textContent = 'NOT FOUND';
+                    applyFetchedPrice(symbol, price);
+                    return;
                 }
-            } catch (error) {
-                console.error('Fetch error:', error);
-                lcdStatus.textContent = 'FETCH ERROR';
+            } catch (e) {
+                console.error('Backup engine failed:', e);
             }
+
+            lcdStatus.textContent = 'NOT FOUND';
+        }
+
+        function applyFetchedPrice(symbol, price) {
+            const buyInput = document.getElementById('buyPrice');
+            buyInput.value = price.toFixed(2);
+            document.getElementById('lcdStatus').textContent = `${symbol} $${price.toFixed(2)}`;
+            
+            document.querySelectorAll('.casio-field input').forEach(i => i.classList.remove('focused'));
+            buyInput.classList.add('focused');
+            currentActiveInput = buyInput;
+            
+            calculate();
         }
 
         function copyPrompt(id) {
