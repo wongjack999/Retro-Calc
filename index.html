@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -7,9 +7,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#e3e7ee">
     
-    <title>CALC Stock-26 V6.5</title>
+    <title>CALC Stock-26 V6.6</title>
     <style>
-        /* 全域佈局鎖死 */
         html, body { 
             margin: 0; 
             padding: 0; 
@@ -37,10 +36,10 @@
             --lcd-bg: #a6be9c; 
             --lcd-text: #12190e; 
             --transition-speed: 0.2s;
-            --main-gap: 1.8vh; 
+            --main-gap: 1.5vh; 
             --border-highlight: rgba(255, 255, 255, 0.9);
             --border-lowlight: rgba(0, 0, 0, 0.04);
-            --placeholder-color: rgba(30, 37, 48, 0.18); 
+            --placeholder-color: rgba(30, 37, 48, 0.25); 
         }
         html.dark-mode { 
             --bg-color: #16181c; 
@@ -55,7 +54,7 @@
             --lcd-text: #ff761a; 
             --border-highlight: rgba(255, 255, 255, 0.08);
             --border-lowlight: rgba(0, 0, 0, 0.2);
-            --placeholder-color: rgba(241, 245, 249, 0.12);
+            --placeholder-color: rgba(241, 245, 249, 0.2);
         }
         
         body { 
@@ -64,10 +63,10 @@
             align-items: center; 
             justify-content: center; 
             box-sizing: border-box;
-            padding-top: calc(var(--main-gap) + max(16px, env(safe-area-inset-top, 0px)));
-            padding-bottom: calc(var(--main-gap) + max(24px, env(safe-area-inset-bottom, 0px)));
-            padding-left: calc(20px + env(safe-area-inset-left, 0px));
-            padding-right: calc(20px + env(safe-area-inset-right, 0px));
+            padding-top: calc(var(--main-gap) + max(12px, env(safe-area-inset-top, 0px)));
+            padding-bottom: calc(var(--main-gap) + max(16px, env(safe-area-inset-bottom, 0px)));
+            padding-left: calc(16px + env(safe-area-inset-left, 0px));
+            padding-right: calc(16px + env(safe-area-inset-right, 0px));
             transition: background-color var(--transition-speed) ease;
         }
         
@@ -91,15 +90,15 @@
         }
 
         /* Top Bar */
-        .top-bar { display: flex; justify-content: space-between; align-items: center; height: 36px; flex-shrink: 0; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; height: 32px; flex-shrink: 0; }
         .brand-logo { font-size: 1.1rem; letter-spacing: 1.5px; color: var(--text-color) !important; font-weight: 700; text-shadow: 0.5px 0.5px 0px var(--shadow-light); }
         .brand-logo span { font-size: 0.65rem; vertical-align: super; margin-left: 2px; opacity: 0.8; }
         .top-controls { display: flex; align-items: center; height: 100%; }
         
         /* 太陽能板 */
         .switch-container { 
-            width: 86px; 
-            height: 26px; 
+            width: 80px; 
+            height: 24px; 
             border-radius: 6px; 
             background: linear-gradient(180deg, #2d1916 0%, #1a0d0b 100%); 
             box-shadow: inset 2px 2px 5px rgba(0,0,0,0.65), 1px 1px 1px var(--shadow-light); 
@@ -112,12 +111,12 @@
         .solar-cells { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: space-evenly; pointer-events: none; z-index: 0; }
         .solar-cells span { width: 1px; height: 100%; background: rgba(255, 255, 255, 0.05); box-shadow: -0.5px 0 0 rgba(0,0,0,0.5); }
         .switch-container::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 65%); pointer-events: none; z-index: 3; }
-        .switch-icon { position: absolute; top: 5px; width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; z-index: 1; pointer-events: none; opacity: 0.9; }
-        .sun-icon { left: 10px; color: #ffb300; } 
-        .moon-icon { right: 10px; color: #e2e8f0; } 
-        .switch-thumb { position: absolute; top: 2px; left: 2px; width: 36px; height: 20px; border-radius: 4px; background: linear-gradient(180deg, #f3f4f6 0%, #c5cbd3 100%); box-shadow: 1px 1px 4px rgba(0,0,0,0.55), inset 1px 1px 0px #ffffff; transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; align-items: center; justify-content: center; z-index: 2; }
-        .switch-thumb::before { content: ''; width: 10px; height: 11px; background: repeating-linear-gradient(90deg, #9ca3af, #9ca3af 2px, transparent 2px, transparent 4px); }
-        html.dark-mode .switch-thumb { transform: translateX(46px); background: linear-gradient(180deg, var(--primary-orange) 0%, #d45d00 100%); box-shadow: 0 0 6px rgba(255,111,0,0.45), inset 1px 1px 0px rgba(255,255,255,0.35); }
+        .switch-icon { position: absolute; top: 4px; width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; z-index: 1; pointer-events: none; opacity: 0.9; }
+        .sun-icon { left: 8px; color: #ffb300; } 
+        .moon-icon { right: 8px; color: #e2e8f0; } 
+        .switch-thumb { position: absolute; top: 2px; left: 2px; width: 34px; height: 18px; border-radius: 4px; background: linear-gradient(180deg, #f3f4f6 0%, #c5cbd3 100%); box-shadow: 1px 1px 4px rgba(0,0,0,0.55), inset 1px 1px 0px #ffffff; transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; align-items: center; justify-content: center; z-index: 2; }
+        .switch-thumb::before { content: ''; width: 10px; height: 10px; background: repeating-linear-gradient(90deg, #9ca3af, #9ca3af 2px, transparent 2px, transparent 4px); }
+        html.dark-mode .switch-thumb { transform: translateX(42px); background: linear-gradient(180deg, var(--primary-orange) 0%, #d45d00 100%); box-shadow: 0 0 6px rgba(255,111,0,0.45), inset 1px 1px 0px rgba(255,255,255,0.35); }
         html.dark-mode .switch-thumb::before { background: repeating-linear-gradient(90deg, #ffffff, #ffffff 2px, transparent 2px, transparent 4px); opacity: 0.7; }
 
         /* LCD 面板 */
@@ -126,7 +125,7 @@
             background-image: radial-gradient(rgba(26, 37, 21, 0.05) 0.6px, transparent 0.6px);
             background-size: 2px 2px;
             padding: 0; 
-            border-radius: 22px; 
+            border-radius: 20px; 
             box-shadow: inset 4px 4px 9px rgba(0,0,0,0.3), 
                         inset -1px -1px 3px rgba(255,255,255,0.25),
                         0.5px 1.5px 0px var(--shadow-light); 
@@ -136,7 +135,7 @@
             flex-shrink: 1; 
             display: flex;
             flex-direction: column;
-            min-height: 110px; 
+            min-height: 100px; 
             overflow: hidden;
             transition: background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
         }
@@ -152,62 +151,60 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 6px 20px 0 20px;
+            padding: 4px 16px 0 16px;
         }
-        .result-title { font-size: 0.72rem; color: var(--lcd-text) !important; opacity: 0.65; margin-bottom: 2px; letter-spacing: 0.5px; }
+        .result-title { font-size: 0.68rem; color: var(--lcd-text) !important; opacity: 0.65; margin-bottom: 2px; letter-spacing: 0.5px; }
         
         .profit-value { 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
             font-variant-numeric: tabular-nums; 
-            font-size: calc(1.7rem + 0.7vh); 
+            font-size: calc(1.6rem + 0.6vh); 
             letter-spacing: -0.02em;
             font-weight: 700;
             color: var(--lcd-text) !important; 
             line-height: 1.05;
         }
         
-        /* LCD 底部狀態列 */
         .lcd-fee-row { 
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
             border-top: 1px solid rgba(0,0,0,0.07); 
-            padding: 10px 20px; 
+            padding: 8px 16px; 
             gap: 4px; 
             flex-shrink: 0;
             background: rgba(0,0,0,0.02);
         }
         html.dark-mode .lcd-fee-row { border-top-color: rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); }
         
-        .fee-label { font-size: 0.65rem; color: var(--lcd-text) !important; opacity: 0.65; display: inline-flex; align-items: center; }
-        .info-icon { width: 13px; height: 13px; border: 1px solid var(--lcd-text); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; margin-left: 4px; cursor: pointer; opacity: 0.6; font-style: italic; font-weight: bold; }
-        .fee-item-compact { font-size: 0.65rem; color: var(--lcd-text) !important; opacity: 0.65; }
+        .fee-label { font-size: 0.62rem; color: var(--lcd-text) !important; opacity: 0.65; display: inline-flex; align-items: center; }
+        .info-icon { width: 13px; height: 13px; border: 1px solid var(--lcd-text); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; margin-left: 3px; cursor: pointer; opacity: 0.6; font-style: italic; font-weight: bold; }
+        .fee-item-compact { font-size: 0.62rem; color: var(--lcd-text) !important; opacity: 0.65; }
         
-        .lcd-sl-group { display: flex; align-items: center; gap: 4px; font-size: 0.65rem; color: var(--lcd-text) !important; opacity: 0.65; }
-        .lcd-btn { background: rgba(0, 0, 0, 0.07); border: none; color: var(--lcd-text) !important; border-radius: 4px; width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem; cursor: pointer; font-weight: 800; padding: 0; margin: 0 1px; }
+        .lcd-sl-group { display: flex; align-items: center; gap: 3px; font-size: 0.62rem; color: var(--lcd-text) !important; opacity: 0.65; }
+        .lcd-btn { background: rgba(0, 0, 0, 0.07); border: none; color: var(--lcd-text) !important; border-radius: 3px; width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem; cursor: pointer; font-weight: 800; padding: 0; margin: 0 1px; }
         html.dark-mode .lcd-btn { background: rgba(255, 255, 255, 0.08); }
 
-        /* Symbol Fetcher Row */
+        /* Symbol Row */
         .symbol-row {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
             flex-shrink: 0;
         }
         .symbol-field {
             flex: 1;
-            position: relative;
         }
         .symbol-field input {
             width: 100%;
-            padding: 12px 14px;
+            padding: 10px 12px;
             border-radius: 12px;
             border: 1px solid transparent;
             background: var(--case-color);
             color: var(--text-color);
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             outline: none;
             box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
             user-select: text !important;
@@ -216,12 +213,12 @@
         }
         .symbol-field input::placeholder {
             color: var(--placeholder-color);
+            text-transform: none;
         }
         
-        /* 實體擬物化 Icon 按鈕 */
         .fetch-btn-icon {
-            width: 48px;
-            height: 44px;
+            width: 44px;
+            height: 40px;
             border-radius: 12px;
             border: 1px solid var(--border-lowlight);
             background: linear-gradient(135deg, var(--case-color) 0%, rgba(0,0,0,0.02) 100%), var(--case-color);
@@ -234,14 +231,14 @@
                 inset 1px 1px 0px var(--border-highlight),
                 2.5px 2.5px 5px var(--shadow-dark), 
                 -2.5px -2.5px 5px var(--shadow-light);
-            transition: transform 0.08s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.08s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: transform 0.08s ease, box-shadow 0.08s ease;
             flex-shrink: 0;
         }
         .fetch-btn-icon svg {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             stroke: currentColor;
-            stroke-width: 2.5;
+            stroke-width: 2.2;
             fill: none;
             stroke-linecap: round;
             stroke-linejoin: round;
@@ -252,21 +249,20 @@
                 inset 1px 1px 1px var(--border-lowlight),
                 1px 1.5px 3px var(--shadow-dark), 
                 -1px -1px 3px var(--shadow-light);
-            color: var(--primary-orange) !important;
         }
 
         /* Input Grid */
-        .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; flex-shrink: 0; }
-        .casio-field label { font-size: 0.68rem; color: var(--text-muted) !important; margin-bottom: 5px; text-align: center; display: block; font-weight: 700; letter-spacing: 0.5px; }
+        .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex-shrink: 0; }
+        .casio-field label { font-size: 0.65rem; color: var(--text-muted) !important; margin-bottom: 4px; text-align: center; display: block; font-weight: 700; letter-spacing: 0.5px; }
         
         .casio-field input { 
             width: 100%; 
-            padding: 12px 4px; 
+            padding: 10px 4px; 
             border: 1px solid transparent; 
             border-radius: 12px; 
             background: var(--case-color); 
             color: var(--text-color) !important; 
-            font-size: 1.15rem; 
+            font-size: 1.1rem; 
             font-weight: 700;
             text-align: center; 
             outline: none; 
@@ -297,25 +293,25 @@
         }
 
         /* Pad Grid */
-        .pad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; flex-shrink: 0; }
-        .pad-top-row { grid-column: span 3; display: flex; gap: 11px; }
+        .pad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; flex-shrink: 0; }
+        .pad-top-row { grid-column: span 3; display: flex; gap: 9px; }
         .pad-top-row .pad-key { flex: 1; }
 
         .pad-key { 
             border: 1px solid var(--border-lowlight); 
             background: linear-gradient(135deg, var(--case-color) 0%, rgba(0,0,0,0.01) 100%), var(--case-color); 
             color: var(--text-color) !important; 
-            padding: clamp(10px, 1.6vh, 16px) 0; 
-            font-size: 1.25rem; 
+            padding: clamp(9px, 1.4vh, 15px) 0; 
+            font-size: 1.2rem; 
             font-weight: 700;
             border-radius: 12px; 
             cursor: pointer; 
             position: relative;
             box-shadow: 
                 inset 1px 1px 0px var(--border-highlight),
-                3px 3px 6px var(--shadow-dark), 
-                -3px -3px 6px var(--shadow-light); 
-            transition: transform 0.08s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.08s cubic-bezier(0.2, 0.8, 0.2, 1);
+                2.5px 2.5px 5px var(--shadow-dark), 
+                -2.5px -2.5px 5px var(--shadow-light); 
+            transition: transform 0.08s ease, box-shadow 0.08s ease;
         }
         .pad-key:active { 
             transform: translateY(1.5px);
@@ -329,7 +325,7 @@
             background: linear-gradient(135deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.06) 100%), var(--case-color);
             color: var(--text-muted) !important; 
             font-weight: 700; 
-            font-size: 1.05rem; 
+            font-size: 1rem; 
         }
         html.dark-mode .pad-fn {
             background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.05) 100%), var(--case-color);
@@ -341,26 +337,19 @@
             border-color: rgba(0, 0, 0, 0.15);
             box-shadow: 
                 inset 1px 1px 0px rgba(255,255,255,0.3),
-                3px 3px 6px var(--shadow-dark), 
+                2.5px 2.5px 5px var(--shadow-dark), 
                 -2px -2px 5px var(--shadow-light) !important;
         }
-        .pad-c:active { 
-            background: linear-gradient(135deg, #e66400 0%, #cc5900 100%) !important; 
-            box-shadow: 
-                inset 1px 1px 1px rgba(0,0,0,0.2),
-                1px 1.5px 3px var(--shadow-dark), 
-                -1px -1px 3px var(--shadow-light) !important;
-        }
 
-        /* Bottom Sheet 共用樣式 */
+        /* Bottom Sheet */
         .sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); display: none; z-index: 99; opacity: 0; transition: opacity 0.2s ease; }
         .sheet-overlay.open { display: block; opacity: 1; }
         
         .bottom-sheet { 
             position: fixed; bottom: 0; left: 0; width: 100%; 
             background: var(--case-color); 
-            border-radius: 30px 30px 0 0; 
-            padding: 16px 24px 20px 24px; 
+            border-radius: 26px 26px 0 0; 
+            padding: 16px 20px 20px 20px; 
             padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); 
             transform: translateY(100%); 
             transition: transform 0.3s cubic-bezier(0.15, 0.85, 0.2, 1); 
@@ -370,68 +359,63 @@
             touch-action: pan-y; 
         }
         .bottom-sheet.open { transform: translateY(0); }
-        .sheet-handle { width: 40px; height: 5px; background: rgba(0, 0, 0, 0.1); border-radius: 3px; margin: 0 auto 16px auto; }
+        .sheet-handle { width: 36px; height: 4px; background: rgba(0, 0, 0, 0.1); border-radius: 2px; margin: 0 auto 14px auto; }
         html.dark-mode .sheet-handle { background: rgba(255,255,255,0.15); }
-        .sheet-content h3 { margin: 0 0 14px 0; color: var(--text-color); font-size: 1.05rem; text-align: center; font-weight: 700; }
+        .sheet-content h3 { margin: 0 0 12px 0; color: var(--text-color); font-size: 1rem; text-align: center; font-weight: 700; }
         
         .sheet-panel-debossed {
             background: rgba(0, 0, 0, 0.015);
-            padding: 14px; border-radius: 16px;
+            padding: 12px; border-radius: 14px;
             box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -1px -1px 2px var(--shadow-light);
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             border: 1px solid var(--border-lowlight);
         }
         html.dark-mode .sheet-panel-debossed { background: rgba(0, 0, 0, 0.15); box-shadow: inset 2.5px 2.5px 5px var(--shadow-dark); }
-        .fee-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; color: var(--text-color); }
-        .fee-table th { color: var(--text-muted); padding: 8px; text-align: left; font-size: 0.65rem; border-bottom: 1.5px solid rgba(128,128,128,0.15); }
-        .fee-table td { padding: 9px 8px; border-bottom: 1px solid rgba(128,128,128,0.1); }
-        .fee-table tr:last-child td { border-bottom: none; }
+        .fee-table { width: 100%; border-collapse: collapse; font-size: 0.72rem; color: var(--text-color); }
+        .fee-table th { color: var(--text-muted); padding: 6px; text-align: left; font-size: 0.6rem; border-bottom: 1.5px solid rgba(128,128,128,0.15); }
+        .fee-table td { padding: 8px 6px; border-bottom: 1px solid rgba(128,128,128,0.1); }
         .tier-header { font-weight: 700; color: var(--primary-orange); }
-        .tier-header td { padding-top: 14px; border-bottom: 1px solid rgba(128,128,128,0.15); }
+        .tier-header td { padding-top: 12px; border-bottom: 1px solid rgba(128,128,128,0.15); }
         
-        /* Prompt Cards 專屬樣式 */
-        .prompt-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+        /* Prompt Cards */
+        .prompt-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
         .prompt-card {
             background: rgba(0,0,0,0.015);
-            border-radius: 14px;
-            padding: 12px 14px;
+            border-radius: 12px;
+            padding: 10px 12px;
             border: 1px solid var(--border-lowlight);
-            box-shadow: inset 1px 1px 0px var(--border-highlight), 2px 2px 5px var(--shadow-dark);
+            box-shadow: inset 1px 1px 0px var(--border-highlight), 2px 2px 4px var(--shadow-dark);
             display: flex;
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
-            transition: transform 0.1s ease;
         }
         html.dark-mode .prompt-card { background: rgba(0,0,0,0.15); }
-        .prompt-card:active { transform: scale(0.98); }
-        .prompt-info { flex: 1; margin-right: 10px; text-transform: none; }
-        .prompt-info .title { font-size: 0.82rem; font-weight: 700; color: var(--text-color); margin-bottom: 2px; }
-        .prompt-info .desc { font-size: 0.65rem; color: var(--text-muted); opacity: 0.8; text-transform: none; }
+        .prompt-info { flex: 1; margin-right: 8px; }
+        .prompt-info .title { font-size: 0.8rem; font-weight: 700; color: var(--text-color); margin-bottom: 2px; }
+        .prompt-info .desc { font-size: 0.62rem; color: var(--text-muted); opacity: 0.8; text-transform: none; }
         .copy-badge {
             background: var(--case-color);
             border: 1px solid var(--border-lowlight);
             color: var(--primary-orange) !important;
-            font-size: 0.68rem;
+            font-size: 0.65rem;
             font-weight: 800;
-            padding: 6px 10px;
-            border-radius: 8px;
+            padding: 5px 8px;
+            border-radius: 6px;
             box-shadow: inset 1px 1px 0px var(--border-highlight), 1.5px 1.5px 3px var(--shadow-dark);
             flex-shrink: 0;
         }
 
         .close-sheet { 
-            width: 100%; padding: 14px; border-radius: 12px; border: none; 
+            width: 100%; padding: 12px; border-radius: 10px; border: none; 
             background: linear-gradient(180deg, var(--accent-orange) 0%, #d45d00 100%); 
-            color: white; font-size: 1.05rem; font-weight: bold; cursor: pointer; 
+            color: white; font-size: 1rem; font-weight: bold; cursor: pointer; 
             box-shadow: 0 4px 10px rgba(255,111,0,0.25); 
-            transition: all 0.1s ease;
         }
-        .close-sheet:active { transform: translateY(1px); box-shadow: 0 2px 5px rgba(255,111,0,0.25); }
 
         .version-footer-sheet { 
-            margin-top: 16px; 
-            font-size: 0.58rem; 
+            margin-top: 12px; 
+            font-size: 0.55rem; 
             color: var(--text-muted); 
             text-align: center; 
             opacity: 0.5; 
@@ -476,9 +460,9 @@
         <!-- 美股代號與 AI Prompt 按鈕列 -->
         <div class="symbol-row">
             <div class="symbol-field">
-                <input type="text" id="tickerInput" placeholder="ENTER SYMBOL (E.G. QQQ)" autocomplete="off">
+                <input type="text" id="tickerInput" placeholder="STOCK / ETF (例: QQQ)" autocomplete="off">
             </div>
-            <button class="fetch-btn-icon" id="fetchBtn" aria-label="Search Stock">
+            <button class="fetch-btn-icon" id="fetchBtn" title="搜尋最新價格">
                 <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             </button>
             <button class="fetch-btn-icon" id="aiPromptBtn" style="color: var(--primary-orange) !important; font-weight:800; font-size:0.75rem;">AI</button>
@@ -509,7 +493,7 @@
 
     <div class="sheet-overlay" id="sheetOverlay"></div>
     
-    <!-- 費用細節 Bottom Sheet -->
+    <!-- 費用細節 Sheet -->
     <div class="bottom-sheet" id="feeSheet">
         <div class="sheet-handle"></div>
         <div class="sheet-content">
@@ -529,11 +513,11 @@
                     </tbody>
                 </table>
             </div>
-            <button class="close-sheet" class="closeSheetBtn">CLOSE</button>
+            <button class="close-sheet closeSheetBtn">CLOSE</button>
         </div>
     </div>
 
-    <!-- AI Prompt Bottom Sheet -->
+    <!-- AI Prompt Sheet -->
     <div class="bottom-sheet" id="promptSheet">
         <div class="sheet-handle"></div>
         <div class="sheet-content">
@@ -568,8 +552,8 @@
                     <div class="copy-badge">COPY</div>
                 </div>
             </div>
-            <button class="close-sheet" class="closeSheetBtn">CLOSE</button>
-            <div class="version-footer-sheet">V6.5 | AI PROMPT GENERATOR INTEGRATED</div>
+            <button class="close-sheet closeSheetBtn">CLOSE</button>
+            <div class="version-footer-sheet">V6.6 | ALLORIGINS PROXY INTEGRATED</div>
         </div>
     </div>
 
@@ -622,19 +606,23 @@
             });
         });
 
-        /* 免費抓取美股即時股價邏輯 */
+        /* 使用 AllOrigins 代理抓取美股即時股價 */
         async function fetchStockPrice() {
             const tickerInput = document.getElementById('tickerInput');
             const symbol = tickerInput.value.trim().toUpperCase();
-            if (!symbol) return;
+            if (!symbol) {
+                alert('請先輸入股票代碼 (例如: QQQ)');
+                return;
+            }
 
             const lcdStatus = document.getElementById('lcdStatus');
             lcdStatus.textContent = 'FETCHING...';
 
             try {
-                const response = await fetch(`https://corsproxy.io/?https://query1.finance.yahoo.com/v8/finance/chart/${symbol}`);
+                // 已更換為 AllOrigins CORS 代理網址，解決 Vercel 上跨域同 IP 封鎖問題
+                const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}`)}`);
                 const data = await response.json();
-                const price = data.chart.result[0].meta.regularMarketPrice;
+                const price = data?.chart?.result?.[0]?.meta?.regularMarketPrice;
 
                 if (price) {
                     const buyInput = document.getElementById('buyPrice');
@@ -662,10 +650,11 @@
 
             navigator.clipboard.writeText(textToCopy).then(() => {
                 const lcdStatus = document.getElementById('lcdStatus');
-                lcdStatus.textContent = `PROMPT ${id} COPIED`;
+                lcdStatus.textContent = `P${id} COPIED`;
                 closeAllSheets();
             }).catch(err => {
                 console.error('Copy failed:', err);
+                alert('複製失敗，請手動選取。');
             });
         }
 
@@ -702,6 +691,7 @@
             });
 
             const bindClickAndTouch = (el, fn) => {
+                if(!el) return;
                 el.addEventListener('touchstart', (e) => { e.preventDefault(); fn(); }, { passive: false });
                 el.addEventListener('click', (e) => { fn(); });
             };
